@@ -74,7 +74,7 @@ to snake-1move
   ask snake-1 0 [
     move-to patch-at (item 0 inputxy-1)(item 1 inputxy-1)
     set pcolor blue set snake? 1 set id 1
-    set heading xy-to-heading inputxy-1
+    set heading xy-to-heading i
   ]
   ask patches with [tail-1 = length-1]
   [set pcolor 0]
@@ -82,11 +82,8 @@ to snake-1move
 end
 
 to snake-2move
-  ask snake-2 1 [
-    move-to patch-at (item 0 inputxy-2)(item 1 inputxy-2)
-    set pcolor red set snake? 1 set id 2
-    set heading xy-to-heading inputxy-2
-  ]
+  ask snake-2 1 [move-to patch-at (item 0 inputxy-2)(item 1 inputxy-2)
+    set pcolor red set snake? 1 set id 2]
   ask patches with [tail-2 = length-2]
   [set pcolor 0]
   ask patches with [pcolor = red][set tail-2 tail-2 + 1]
@@ -198,7 +195,7 @@ Players
 Players
 1
 2
-2.0
+1.0
 1
 1
 NIL
