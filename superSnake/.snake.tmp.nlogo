@@ -96,6 +96,7 @@ to snake-2move
     move-to patch-at (item 0 inputxy-2)(item 1 inputxy-2)
     snake-die ; fixes killing before it reaches
     snake-eat 2; fixes the eating problems including ghost eating.
+
     if bomb-2 != 100 [set bomb-2 bomb-2 + 1]
     set pcolor red set snake? 1 set id 2
     set heading xy-to-heading inputxy-2
@@ -117,7 +118,7 @@ to snake-eat [long]
 end
 
 to snake-die
-  if pcolor = red or pcolor = blue or pcolor = white
+  if pcolor = red or pcolor = blue
   [
     ask patches with [pcolor = [color] of myself] [set pcolor black]
     die
