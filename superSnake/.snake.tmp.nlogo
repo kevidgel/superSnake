@@ -1,10 +1,15 @@
-patches-own [
+globals[
+  inputxy-1 ;state of snake 1, as list. ex. [0 1] would be 0 horizontal and 1 vertical.
+  inputxy-2 ;state of snake
   length-1 ;length of snake 1
   length-2 ;length of snake 2
+]
+
+patches-own [
+  tail-1;Which part of snake 1 it is. Tail would be length. Head would be 1
+  tail-2;Which part of snake 2 it is.
   snake? ;if it is a snake or not
   id ;identity of the snake
-  inputxy-1 ;state of snake 1, as list. ex. [0 1] would be 0 horizontal and 1 vertical.
-  inputxy-2 ;state of snake 2
 ]
 breed [snakes-1 snake-1]
 breed [snakes-2 snake-2]
@@ -20,11 +25,13 @@ to setup
   snake-setup
   world-setup
   bomb-setup
+  reset-ticks
 end
 
 ;Go runs the game (model)
 to go
-
+  snake-1move
+  snake-2move
 end
 ;
 
@@ -33,21 +40,36 @@ to snake-setup
   ask n-of Players patches [set snake? 1]
   ask one-of patches with [snake? = 1] [
     set pcolor blue
-    set plabel 1
     set length-1 3
     set id 1
-    sprout-snakes-1 1
+    sprout-snakes-1 1[set label 1]
+    north 1
+    set tail-1 1
   ]
   ask one-of patches with [snake? = 1 and pcolor != blue] [
     set pcolor red
-    set plabel 2
     set length-2 3
     set id 2
-    sprout-snakes-2 1
+    sprout-snakes-2 1[set label 2]
+    south
+    set tail-2 1
   ]
 end
 
-to snake-move
+to snake-1move
+  ask snake-1 0 [move-to patch-at (item 0 inputxy-1)(item 1 inputxy-1)
+    set pcolor blue set snake? 1 set id 1]
+  ask patches with [pcolor = blue and tail-1 = length-1]
+  [set pcolor 0 set id 0 set snake? 0 set tail-1 0]
+  ask patches with [pcolor = blue][set tail-1 tail-1 + 1]
+end
+
+to snake-2move
+  ask snake-2 1 [move-to patch-at (item 0 inputxy-2)(item 1 inputxy-2)
+    set pcolor red set snake? 1 set id 2]
+  ask patches with [tail-2 = length-2]
+  [set pcolor 0 set id 0 set snake? 0 set tail-2 0]
+  ask patches with [pcolor = red][set tail-2 tail-2 + 1]
 end
 
 to snake-die
@@ -66,29 +88,23 @@ to south [player]
   if player = 1
   [set inputxy-1 [0 -1]]
   if player = 2
-  [set inputxy-2 [0 1]]
+  [set inputxy-2 [0 -1]]
 end
 
 to west [player]
   if player = 1
-  [set inputxy-1 [0 1]]
+  [set inputxy-1 [-1 0]]
   if player = 2
-  [set inputxy-2 [0 1]]
+  [set inputxy-2 [-1 0]]
 end
 
 to east [player]
   if player = 1
-  [set inputxy-1 [0 1]]
+  [set inputxy-1 [1 0]]
   if player = 2
-  [set inputxy-2 [0 1]]
+  [set inputxy-2 [1 0]]
 end
 
-to-report player-type [player]
-  if player = 1
-  [report inputxy-1]
-  if player = 2
-  [report inputxy-2]
-end
 ;
 
 ;;Environment
@@ -131,8 +147,8 @@ GRAPHICS-WINDOW
 16
 -16
 16
-0
-0
+1
+1
 1
 ticks
 30.0
@@ -160,6 +176,23 @@ BUTTON
 NIL
 setup
 NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+35
+173
+143
+206
+NIL
+go
+T
 1
 T
 OBSERVER
