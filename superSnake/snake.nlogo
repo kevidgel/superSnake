@@ -3,6 +3,8 @@ globals[
   inputxy-2 ;state of snake
   length-1 ;length of snake 1
   length-2 ;length of snake 2
+  bomb-1; timer for 1st snake.
+  bomb-2; timer for 2nd snake.
 ]
 
 patches-own [
@@ -26,7 +28,6 @@ to setup
   ]
   snake-setup
   world-setup
-  bomb-setup
   reset-ticks
 end
 
@@ -195,9 +196,9 @@ end
 ;
 
 ;;Modes (Bombs)
-to bomb-setup
+to bomb-summon
+  if bomb-1 = 100 [ask patches with [tail-1 = length-1][set tail-1 0 set pcolor white]]
 end
-
 to bomb-eat
 end
 
@@ -431,6 +432,23 @@ Food
 1
 NIL
 HORIZONTAL
+
+BUTTON
+214
+510
+446
+543
+NIL
+set bomb-1 100\nbomb-summon\n
+NIL
+1
+T
+OBSERVER
+NIL
+E
+NIL
+NIL
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
