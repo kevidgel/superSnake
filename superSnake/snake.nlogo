@@ -30,8 +30,9 @@ end
 
 ;Go runs the game (model)
 to go
-  snake-1move
-  snake-2move
+  if any? snakes-1 [snake-1move]
+  if any? snakes-2 [snake-2move]
+  reset-patches
   tick
 end
 ;
@@ -41,7 +42,7 @@ to snake-setup
   ask n-of Players patches [set snake? 1]
   ask one-of patches with [snake? = 1] [
     set pcolor blue
-    set length-1 3
+    set length-1 10
     set id 1
     sprout-snakes-1 1[set label 1]
     north 1
@@ -60,8 +61,8 @@ end
 to snake-1move
   ask snake-1 0 [move-to patch-at (item 0 inputxy-1)(item 1 inputxy-1)
     set pcolor blue set snake? 1 set id 1]
-  ask patches with [pcolor = blue and tail-1 = length-1]
-  [set pcolor 0 set id 0 set snake? 0 set tail-1 0]
+  ask patches with [pcolor = blue and tail-1 > length-1]
+  [set pcolor 0]
   ask patches with [pcolor = blue][set tail-1 tail-1 + 1]
 end
 
@@ -69,11 +70,17 @@ to snake-2move
   ask snake-2 1 [move-to patch-at (item 0 inputxy-2)(item 1 inputxy-2)
     set pcolor red set snake? 1 set id 2]
   ask patches with [tail-2 = length-2]
-  [set pcolor 0 set id 0 set snake? 0 set tail-2 0]
+  [set pcolor 0]
   ask patches with [pcolor = red][set tail-2 tail-2 + 1]
 end
 
+to reset-patches
+  ask patches with [pcolor = 0]
+  [set id 0 set snake? 0 set tail-1 0 set tail-2 0]
+end
+
 to snake-die
+  ask snake-1 0 [die]
 end
 ;
 
@@ -128,9 +135,9 @@ end
 ;
 @#$#@#$#@
 GRAPHICS-WINDOW
-210
+362
 10
-647
+799
 448
 -1
 -1
@@ -148,8 +155,8 @@ GRAPHICS-WINDOW
 16
 -16
 16
-1
-1
+0
+0
 1
 ticks
 30.0
@@ -199,6 +206,142 @@ T
 OBSERVER
 NIL
 NIL
+NIL
+NIL
+1
+
+BUTTON
+106
+240
+184
+273
+NIL
+north 1
+NIL
+1
+T
+OBSERVER
+NIL
+W
+NIL
+NIL
+1
+
+BUTTON
+106
+361
+184
+394
+NIL
+north 2\n\n
+NIL
+1
+T
+OBSERVER
+NIL
+I
+NIL
+NIL
+1
+
+BUTTON
+106
+295
+185
+328
+NIL
+south 1\n
+NIL
+1
+T
+OBSERVER
+NIL
+S
+NIL
+NIL
+1
+
+BUTTON
+106
+419
+185
+452
+NIL
+south 2\n
+NIL
+1
+T
+OBSERVER
+NIL
+K
+NIL
+NIL
+1
+
+BUTTON
+192
+264
+261
+297
+NIL
+east 1
+NIL
+1
+T
+OBSERVER
+NIL
+D
+NIL
+NIL
+1
+
+BUTTON
+20
+264
+91
+297
+NIL
+west 1\n
+NIL
+1
+T
+OBSERVER
+NIL
+A
+NIL
+NIL
+1
+
+BUTTON
+194
+396
+264
+429
+NIL
+east 2\n
+NIL
+1
+T
+OBSERVER
+NIL
+L
+NIL
+NIL
+1
+
+BUTTON
+21
+387
+92
+420
+NIL
+west 2
+NIL
+1
+T
+OBSERVER
+NIL
+J
 NIL
 NIL
 1
