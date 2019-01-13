@@ -66,23 +66,29 @@ to south [player]
   if player = 1
   [set inputxy-1 [0 -1]]
   if player = 2
-  [set inputxy-2 [0 -1]]
+  [set inputxy-2 [0 1]]
 end
 
 to west [player]
   if player = 1
-  [set inputxy-1 [-1 0]]
+  [set inputxy-1 [0 1]]
   if player = 2
-  [set inputxy-2 [-1 0]]
+  [set inputxy-2 [0 1]]
 end
 
 to east [player]
   if player = 1
-  [set inputxy-1 [1 0]]
+  [set inputxy-1 [0 1]]
   if player = 2
-  [set inputxy-2 [1 0]]
+  [set inputxy-2 [0 1]]
 end
 
+to-report player-type [player]
+  if player = 1
+  [report inputxy-1]
+  if player = 2
+  [report inputxy-2]
+end
 ;
 
 ;;Environment
