@@ -35,9 +35,7 @@ to go
   if count turtles > 0 [
     if any? snakes-1 [snake-1move]
     if any? snakes-2 [snake-2move]
-    snake-eat
-    snake-die
-    food-spawn
+    food-spawn-go
     reset-patches
   ]
   tick
@@ -57,7 +55,7 @@ to snake-setup
       set color blue
       set size 2.5
     ]
-    north 1
+    set inputxy-1 [0 1]
     set tail-1 1
   ]
   if Players != 1 [ ;fixed multiplayer issue
@@ -71,7 +69,7 @@ to snake-setup
         set color red
         set size 2.5
       ]
-      south 2
+      set inputxy-2 [0 -1]
       set tail-2 1
     ]
   ]
@@ -80,6 +78,8 @@ end
 to snake-1move
   ask snake-1 0 [
     move-to patch-at (item 0 inputxy-1)(item 1 inputxy-1)
+    snake-die; fixes killing before it reaches.
+    snake-eat length-1; fixes the eating problems including ghost eatin
     set pcolor blue set snake? 1 set id 1
     set heading xy-to-heading inputxy-1
   ]
@@ -91,6 +91,8 @@ end
 to snake-2move
   ask snake-2 1 [
     move-to patch-at (item 0 inputxy-2)(item 1 inputxy-2)
+    snake-die ; fixes killing before it reaches
+    snake-eat length-2; fixes the eating problems including ghost eating.
     set pcolor red set snake? 1 set id 2
     set heading xy-to-heading inputxy-2
   ]
@@ -99,62 +101,63 @@ to snake-2move
   ask patches with [pcolor = red][set tail-2 tail-2 + 1]
 end
 
-to snake-eat
-  if any? snakes-1 [
-    ask snake-1 0 [
-      set length-1 length-1 + [food-value] of patch-ahead 1
-    ]
+to snake-eat [long]
+  if shade-of? pcolor brown[
+    set long (long + food-value)
+    set pcolor 0
   ]
-  if any? snakes-2 [
-    ask snake-2 1 [
-      set length-2 length-2 + [food-value] of patch-ahead 1
-    ]
+end
+
+to snake-die
+  if pcolor = red or pcolor = blue
+  [
+    ask patches with [pcolor = [color] of myself] [set pcolor black]
+    die
   ]
 end
 
 to reset-patches
   ask patches with [pcolor = 0]
-  [set id 0 set snake? 0 set tail-1 0 set tail-2 0]
+  [set id 0 set snake? 0 set tail-1 0 set tail-2 0 set food-value 0]
 end
 
-to snake-die
-  ask turtles [
-    if [pcolor] of patch-ahead 1 = red or [pcolor] of patch-ahead 1 = blue
-    [
-      ask patches with [pcolor = [color] of myself] [set pcolor black]
-      die
-    ]
-  ]
-end
 ;
 
 ;;Controls
 to north [player]
   if player = 1
-  [set inputxy-1 [0 1]]
+  [if (item 1 inputxy-1) = 0
+    [set inputxy-1 [0 1]]]
   if player = 2
-  [set inputxy-2 [0 1]]
+  [if (item 1 inputxy-2) = 0
+    [set inputxy-2 [0 1]]]
 end
 
 to south [player]
   if player = 1
-  [set inputxy-1 [0 -1]]
+  [if (item 1 inputxy-1) = 0
+    [set inputxy-1 [0 -1]]]
   if player = 2
-  [set inputxy-2 [0 -1]]
+  [if (item 1 inputxy-2) = 0
+    [set inputxy-2 [0 -1]]]
 end
 
 to west [player]
   if player = 1
-  [set inputxy-1 [-1 0]]
+  [if (item 0 inputxy-1) = 0
+    [set inputxy-1 [-1 0]]]
   if player = 2
-  [set inputxy-2 [-1 0]]
+  [if (item 0 inputxy-2) = 0
+    [set inputxy-2 [-1 0]]]
 end
 
 to east [player]
   if player = 1
-  [set inputxy-1 [1 0]]
+  [if (item 0 inputxy-1) = 0
+    [set inputxy-1 [1 0]]]
   if player = 2
-  [set inputxy-2 [1 0]]
+  [if (item 0 inputxy-2) = 0
+    [set inputxy-2 [1 0]]]
 end
 
 to-report xy-to-heading [xy] ;converts directional coordinates to heading
@@ -170,20 +173,20 @@ end
 ;
 
 ;;Environment
-to world-setup
-  ask n-of Food patches with [pcolor = black] [
+to food-spawn [num]
+  ask n-of num patches with [pcolor = black] [
     set food-value (random 3) + 1
-    set pcolor scale-color brown food-value 0 4
+    set pcolor scale-color brown food-value -3 6
   ]
 end
 
-to food-spawn
-  if count patches with [food-value > 0] = 0  [
-    ask n-of Food patches with [pcolor = black] [
-      set food-value (random 3) + 1
-      set pcolor scale-color brown food-value 0 4
-    ]
-  ]
+to world-setup
+   food-spawn food
+end
+
+to food-spawn-go
+  if count patches with [food-value ] < food
+  [food-spawn 1]
 end
 ;
 
@@ -226,10 +229,10 @@ ticks
 30.0
 
 SLIDER
-32
-43
-204
-76
+181
+83
+353
+116
 Players
 Players
 1
@@ -411,15 +414,15 @@ NIL
 1
 
 SLIDER
-232
-44
-404
-77
+182
+147
+354
+180
 Food
 Food
 1
 5
-2.0
+3.0
 1
 1
 NIL
