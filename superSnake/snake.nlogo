@@ -48,6 +48,7 @@ to snake-setup
 end
 
 to snake-move
+
 end
 
 to snake-die
@@ -56,31 +57,39 @@ end
 
 ;;Controls
 to north [player]
-  if player = 1
-  [set inputxy-1 [0 1]]
-  if player = 2
-  [set inputxy-2 [0 1]]
+  ask turtles [
+    if player = 1
+    [set inputxy-1 [0 1]]
+    if player = 2
+    [set inputxy-2 [0 1]]
+  ]
 end
 
 to south [player]
-  if player = 1
-  [set inputxy-1 [0 -1]]
-  if player = 2
-  [set inputxy-2 [0 -1]]
+  ask turtles [
+    if player = 1
+    [set inputxy-1 [0 -1]]
+    if player = 2
+    [set inputxy-2 [0 -1]]
+  ]
 end
 
 to west [player]
-  if player = 1
-  [set inputxy-1 [-1 0]]
-  if player = 2
-  [set inputxy-2 [-1 0]]
+  ask turtles [
+    if player = 1
+    [set inputxy-1 [-1 0]]
+    if player = 2
+    [set inputxy-2 [-1 0]]
+  ]
 end
 
 to east [player]
-  if player = 1
-  [set inputxy-1 [1 0]]
-  if player = 2
-  [set inputxy-2 [1 0]]
+  ask turtles [
+    if player = 1
+    [set inputxy-1 [1 0]]
+    if player = 2
+    [set inputxy-2 [1 0]]
+  ]
 end
 
 ;
@@ -159,6 +168,142 @@ T
 OBSERVER
 NIL
 NIL
+NIL
+NIL
+1
+
+BUTTON
+264
+453
+327
+486
+NIL
+north 1 
+NIL
+1
+T
+OBSERVER
+NIL
+W
+NIL
+NIL
+1
+
+BUTTON
+198
+485
+265
+518
+NIL
+west 1 
+NIL
+1
+T
+OBSERVER
+NIL
+A
+NIL
+NIL
+1
+
+BUTTON
+261
+517
+331
+550
+NIL
+south 1 
+NIL
+1
+T
+OBSERVER
+NIL
+S
+NIL
+NIL
+1
+
+BUTTON
+327
+485
+407
+518
+NIL
+east 1 
+NIL
+1
+T
+OBSERVER
+NIL
+D
+NIL
+NIL
+1
+
+BUTTON
+515
+460
+607
+493
+NIL
+north 2
+NIL
+1
+T
+OBSERVER
+NIL
+I
+NIL
+NIL
+1
+
+BUTTON
+514
+522
+607
+555
+NIL
+south 2
+NIL
+1
+T
+OBSERVER
+NIL
+K
+NIL
+NIL
+1
+
+BUTTON
+431
+492
+516
+525
+NIL
+west 2 
+NIL
+1
+T
+OBSERVER
+NIL
+J
+NIL
+NIL
+1
+
+BUTTON
+598
+492
+678
+525
+NIL
+east 2 
+NIL
+1
+T
+OBSERVER
+NIL
+L
 NIL
 NIL
 1
