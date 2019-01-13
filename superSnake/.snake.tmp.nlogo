@@ -10,6 +10,7 @@ patches-own [
   tail-2;Which part of snake 2 it is.
   snake? ;if it is a snake or not
   id ;identity of the snake
+  food-value; how much length the food provides
 ]
 breed [snakes-1 snake-1]
 breed [snakes-2 snake-2]
@@ -21,6 +22,7 @@ to setup
   ask patches [
     set length-1 0
     set length-2 0
+    set food-value 0
   ]
   snake-setup
   world-setup
@@ -30,9 +32,14 @@ end
 
 ;Go runs the game (model)
 to go
-  if any? snakes-1 [snake-1move]
-  if any? snakes-2 [snake-2move]
-  reset-patches
+  if count turtles > 0 [
+    if any? snakes-1 [snake-1move]
+    if any? snakes-2 [snake-2move]
+    snake-eat
+    snake-die
+    food-spawn
+    reset-patches
+  ]
   tick
 end
 ;
@@ -54,19 +61,19 @@ to snake-setup
     set tail-1 1
   ]
   if Players != 1 [ ;fixed multiplayer issue
-  ask one-of patches with [snake? = 1 and pcolor != blue] [
-    set pcolor red
-    set length-2 3
-    set id 2
-    sprout-snakes-2 1[
+    ask one-of patches with [snake? = 1 and pcolor != blue] [
+      set pcolor red
+      set length-2 3
+      set id 2
+      sprout-snakes-2 1[
         set label 2
         set shape "snake-head"
         set color red
         set size 2.5
       ]
-    south 2
-    set tail-2 1
-  ]
+      south 2
+      set tail-2 1
+    ]
   ]
 end
 
@@ -74,7 +81,7 @@ to snake-1move
   ask snake-1 0 [
     move-to patch-at (item 0 inputxy-1)(item 1 inputxy-1)
     set pcolor blue set snake? 1 set id 1
-    set heading xy-to-heading i
+    set heading xy-to-heading inputxy-1
   ]
   ask patches with [tail-1 = length-1]
   [set pcolor 0]
@@ -82,11 +89,27 @@ to snake-1move
 end
 
 to snake-2move
-  ask snake-2 1 [move-to patch-at (item 0 inputxy-2)(item 1 inputxy-2)
-    set pcolor red set snake? 1 set id 2]
+  ask snake-2 1 [
+    move-to patch-at (item 0 inputxy-2)(item 1 inputxy-2)
+    set pcolor red set snake? 1 set id 2
+    set heading xy-to-heading inputxy-2
+  ]
   ask patches with [tail-2 = length-2]
   [set pcolor 0]
   ask patches with [pcolor = red][set tail-2 tail-2 + 1]
+end
+
+to snake-eat
+  if any? snakes-1 [
+    ask snake-1 0 [
+      set length-1 length-1 + [food-value] of patch-ahead 1
+    ]
+  ]
+  if any? snakes-2 [
+    ask snake-2 1 [
+      set length-2 length-2 + [food-value] of patch-ahead 1
+    ]
+  ]
 end
 
 to reset-patches
@@ -95,7 +118,13 @@ to reset-patches
 end
 
 to snake-die
-  ask snake-1 0 [die]
+  ask turtles [
+    if [pcolor] of patch-ahead 1 = red or [pcolor] of patch-ahead 1 = blue
+    [
+      ask patches with [pcolor = [color] of myself] [set pcolor black]
+      die
+    ]
+  ]
 end
 ;
 
@@ -134,17 +163,27 @@ to-report xy-to-heading [xy] ;converts directional coordinates to heading
   if xy = [0 -1]
   [report 180]
   if xy = [1 0]
-  [report 270]
-  if xy = [-1 0]
   [report 90]
+  if xy = [-1 0]
+  [report 270]
 end
 ;
 
 ;;Environment
 to world-setup
+  ask n-of Food patches with [pcolor = black] [
+    set food-value (random 3) + 1
+    set pcolor scale-color brown food-value 0 4
+  ]
 end
 
 to food-spawn
+  if count patches with [food-value > 0] = 0  [
+    ask n-of Food patches with [pcolor = black] [
+      set food-value (random 3) + 1
+      set pcolor scale-color brown food-value 0 4
+    ]
+  ]
 end
 ;
 
@@ -195,7 +234,7 @@ Players
 Players
 1
 2
-1.0
+2.0
 1
 1
 NIL
@@ -370,6 +409,21 @@ J
 NIL
 NIL
 1
+
+SLIDER
+232
+44
+404
+77
+Food
+Food
+1
+5
+2.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
