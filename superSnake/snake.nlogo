@@ -1,6 +1,22 @@
+;The patch that the snake "head" is on has a variable "length-x"
+;That variable is set to dist-2, the distance of the entire snake.
+;As the snake head moves to a different patch, the previous patch(es) decreases its length-x by 1.
+;Eventually, if length-x = 0, it stop being part of the tail.
+;Ex.
+; 00030000 ;3 is location of the head
+ ;snake moves right by 1
+; 00023000 ;1, 2 is the tail
+ ;snake moves right by 1
+; 00012300
+ ;snake moves right by 1
+; 00001230
+; ...
+
 patches-own [
   length-1 ;length of snake 1
   length-2 ;length of snake 2
+  dist-1
+  dist-2
   snake? ;if it is a snake or not
   id ;identity of the snake
   inputxy-1 ;state of snake 1, as list. ex. [0 1] would be 0 horizontal and 1 vertical.
