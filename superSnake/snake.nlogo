@@ -79,7 +79,7 @@ to snake-1move
   ask snake-1 0 [
     move-to patch-at (item 0 inputxy-1)(item 1 inputxy-1)
     snake-die; fixes killing before it reaches.
-    snake-eat length-1; fixes the eating problems including ghost eatin
+    snake-eat 1; fixes the eating problems including ghost eatin
     set pcolor blue set snake? 1 set id 1
     set heading xy-to-heading inputxy-1
   ]
@@ -92,7 +92,7 @@ to snake-2move
   ask snake-2 1 [
     move-to patch-at (item 0 inputxy-2)(item 1 inputxy-2)
     snake-die ; fixes killing before it reaches
-    snake-eat length-2; fixes the eating problems including ghost eating.
+    snake-eat 2; fixes the eating problems including ghost eating.
     set pcolor red set snake? 1 set id 2
     set heading xy-to-heading inputxy-2
   ]
@@ -103,8 +103,12 @@ end
 
 to snake-eat [long]
   if shade-of? pcolor brown[
-    set long (long + food-value)
+    if long = 1
+    [set length-1 length-1 + food-value]
+    if long = 2
+    [set length-2 length-2 + food-value]
     set pcolor 0
+    ask patch-here [set food-value 0]
   ]
 end
 
