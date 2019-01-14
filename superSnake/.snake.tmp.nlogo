@@ -195,7 +195,7 @@ to world-setup ;sets up the world
    food-spawn food
 end
 
-to food-spawn-go ;spawns food as the game runs
+to food-spawn-go ;spawns food as the game ru
   if count patches with [food-value > 0] < food
   [food-spawn 1]
 end
