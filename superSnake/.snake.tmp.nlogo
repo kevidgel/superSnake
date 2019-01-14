@@ -3,8 +3,8 @@ globals[
   inputxy-2 ;state of snake
   length-1 ;length of snake 1
   length-2 ;length of snake 2
-  bomb-1; timer for 1st snake.
-  bomb-2; timer for 2nd snake.
+  bomb-2; cooldown for 2nd snake.
+  bomb-1; cooldown for 1st snake.
 ]
 
 patches-own [
@@ -13,6 +13,7 @@ patches-own [
   snake? ;if it is a snake or not
   id ;identity of the snake
   food-value; how much length the food provides
+  bomb-timer; how much time left until bomb disappears/explodes.
 ]
 breed [snakes-1 snake-1]
 breed [snakes-2 snake-2]
@@ -34,13 +35,14 @@ end
 ;Go runs the game (model)
 to go
   if count turtles > 0 [
+    bomb-explode
     if any? snakes-1 [snake-1move]
     if any? snakes-2 [snake-2move]
     food-spawn-go
     reset-patches
-    bomb-tick
+    if bombs? [bomb-tick]
+    tick
   ]
-  tick
 end
 ;
 
@@ -82,7 +84,6 @@ to snake-1move
     move-to patch-at (item 0 inputxy-1)(item 1 inputxy-1)
     snake-die; fixes killing before it reaches.
     snake-eat 1; fixes the eating problems including ghost eatin
-    if bomb-1 != 100 [set bomb-1 bomb-1 + 1]
     set pcolor blue set snake? 1 set id 1
     set heading xy-to-heading inputxy-1
   ]
@@ -96,8 +97,6 @@ to snake-2move
     move-to patch-at (item 0 inputxy-2)(item 1 inputxy-2)
     snake-die ; fixes killing before it reaches
     snake-eat 2; fixes the eating problems including ghost eating.
-
-    if bomb-2 != 100 [set bomb-2 bomb-2 + 1]
     set pcolor red set snake? 1 set id 2
     set heading xy-to-heading inputxy-2
   ]
@@ -118,7 +117,7 @@ to snake-eat [long]
 end
 
 to snake-die
-  if pcolor = red or pcolor = blue
+  if member? pcolor [red blue orange white]
   [
     ask patches with [pcolor = [color] of myself] [set pcolor black]
     die
@@ -127,7 +126,7 @@ end
 
 to reset-patches
   ask patches with [pcolor = 0]
-  [set id 0 set snake? 0 set tail-1 0 set tail-2 0 set food-value 0]
+  [set id 0 set snake? 0 set tail-1 0 set tail-2 0]
 end
 
 ;
@@ -201,17 +200,20 @@ end
 
 ;;Modes (Bombs)
 to bomb-summon [n]
-  if bomb-1 = 100 and n = 1[ask patches with [tail-1 = length-1][set tail-1 0 set pcolor white] set bomb-1 0]
-  if bomb-2 = 100 and n = 2[ask patches with [tail-2 = length-2][set tail-2 0 set pcolor white] set bomb-1 0]
+  if bomb-1 = 100 and n = 1[ask patches with [tail-1 = length-1][set tail-1 0 set pcolor white set bomb-timer 200] set bomb-1 0]
+  if bomb-2 = 100 and n = 2[ask patches with [tail-2 = length-2][set tail-2 0 set pcolor white set bomb-timer 200] set bomb-1 0]
 end
 to bomb-tick
-  if bomb-1 != 100 [set bomb-1 bomb-1 + 1]
-  if bomb-2 != 100 [set bomb-2 bomb-2 + 1]
+  if bomb-1 != 100 [set bomb-1 bomb-1 + 2]
+  if bomb-2 != 100 [set bomb-2 bomb-2 + 2]
+  ask patches with [bomb-timer = 0 and member? pcolor [orange ][set pcolor 0]
+  ask patches with [bomb-timer != 0][set bomb-timer bomb-timer - 1]
 end
 to bomb-eat
 end
 
 to bomb-explode
+  ask patches with [bomb-timer = 0 and pcolor = white][ask patches in-radius 2[set pcolor orange set bomb-timer 10]]
 end
 ;
 @#$#@#$#@
@@ -243,25 +245,25 @@ ticks
 30.0
 
 SLIDER
-181
-83
-353
-116
+190
+66
+362
+99
 Players
 Players
 1
 2
-2.0
+1.0
 1
 1
 NIL
 HORIZONTAL
 
 BUTTON
-31
-95
-106
-128
+44
+74
+138
+122
 NIL
 setup
 NIL
@@ -269,16 +271,16 @@ NIL
 T
 OBSERVER
 NIL
-NIL
+`
 NIL
 NIL
 1
 
 BUTTON
-35
-173
-143
-206
+42
+138
+138
+181
 NIL
 go
 T
@@ -428,10 +430,10 @@ NIL
 1
 
 SLIDER
-182
-147
-354
-180
+190
+99
+362
+132
 Food
 Food
 1
@@ -462,9 +464,9 @@ NIL
 MONITOR
 215
 250
-279
+300
 295
-NIL
+bomb timer
 bomb-1
 17
 1
@@ -473,9 +475,9 @@ bomb-1
 MONITOR
 1054
 253
-1117
+1139
 298
-NIL
+bomb timer
 Bomb-2
 17
 1
@@ -497,6 +499,17 @@ O
 NIL
 NIL
 1
+
+SWITCH
+190
+132
+294
+165
+Bombs?
+Bombs?
+0
+1
+-1000
 
 @#$#@#$#@
 ## WHAT IS IT?
