@@ -35,12 +35,12 @@ end
 ;Go runs the game (model)
 to go
   if count turtles > 0 [
-    bomb-explode
     if any? snakes-1 [snake-1move]
     if any? snakes-2 [snake-2move]
     food-spawn-go
     reset-patches
-    if bombs? [bomb-tick]
+    if bombs? [bomb-tick
+    bomb-explode]
     tick
   ]
 end
