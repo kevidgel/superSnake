@@ -40,7 +40,7 @@ to go
     food-spawn-go
     reset-patches
     if bombs? [bomb-tick
-    bomb-explode]
+      bomb-explode]
     tick
   ]
 end
@@ -88,8 +88,10 @@ to snake-1move ;controls how player 1 moves
     set pcolor blue set snake? 1 set id 1
     set heading xy-to-heading inputxy-1
   ]
-  ask patches with [tail-1 = length-1]
-  [set pcolor 0]
+  ask patches with [tail-1 = length-1][
+    if (pxcor + pycor) mod 2 = 0 [ set pcolor 56]
+    if (pxcor + pycor) mod 2 = 1 [ set pcolor 57]
+  ]
   ask patches with [pcolor = blue][set tail-1 tail-1 + 1]
 end
 
@@ -101,8 +103,10 @@ to snake-2move ;controls how player 2 moves
     set pcolor red set snake? 1 set id 2
     set heading xy-to-heading inputxy-2
   ]
-  ask patches with [tail-2 = length-2]
-  [set pcolor 0]
+  ask patches with [tail-2 = length-2] [
+    if (pxcor + pycor) mod 2 = 0 [ set pcolor 56]
+    if (pxcor + pycor) mod 2 = 1 [ set pcolor 57]
+  ]
   ask patches with [pcolor = red][set tail-2 tail-2 + 1]
 end
 
@@ -112,7 +116,8 @@ to snake-eat [long] ;how snakes eat
     [set length-1 length-1 + food-value] ;depending on the player, if a snake is on a food patch, it sets its length to the length + the food value of the patch.
     if long = 2
     [set length-2 length-2 + food-value]
-    set pcolor 0
+    if (pxcor + pycor) mod 2 = 0 [ set pcolor 56]
+    if (pxcor + pycor) mod 2 = 1 [ set pcolor 57]
     ask patch-here [set food-value 0] ;resets patch food-value
   ]
 end
@@ -120,7 +125,10 @@ end
 to snake-die
   if member? pcolor [red blue yellow white] ;if a snake hits another or itself, it dies.
   [
-    ask patches with [pcolor = [color] of myself] [set pcolor black]
+    ask patches with [pcolor = [color] of myself] [
+      if (pxcor + pycor) mod 2 = 0 [ set pcolor 56]
+      if (pxcor + pycor) mod 2 = 1 [ set pcolor 57]
+    ]
     die
   ]
 end
@@ -185,17 +193,19 @@ end
 
 ;;Environment
 to food-spawn [num] ;spawns the food depending on the food slider
-  ask n-of num patches with [pcolor = black] [
+  ask n-of num patches with [pcolor = 56 or pcolor = 57] [
     set food-value (random 3) + 1
     set pcolor scale-color brown food-value -3 6
   ]
 end
 
 to world-setup ;sets up the world
-   food-spawn food
+  ask patches [ if (pxcor + pycor) mod 2 = 0 [ set pcolor 56] ]
+  ask patches [ if (pxcor + pycor) mod 2 = 1 [ set pcolor 57] ]
+  food-spawn food
 end
 
-to food-spawn-go ;spawns food as the game ru
+to food-spawn-go ;spawns food as the game runs
   if count patches with [food-value > 0] < food
   [food-spawn 1]
 end
@@ -209,7 +219,10 @@ end
 to bomb-tick
   if bomb-1 != 100 [set bomb-1 bomb-1 + 2]
   if bomb-2 != 100 [set bomb-2 bomb-2 + 2]
-  ask patches with [bomb-timer = 0 and member? pcolor [orange yellow]][set pcolor 0]
+  ask patches with [bomb-timer = 0 and member? pcolor [orange yellow]][
+    if (pxcor + pycor) mod 2 = 0 [ set pcolor 56]
+      if (pxcor + pycor) mod 2 = 1 [ set pcolor 57]
+  ]
   ask patches with [bomb-timer != 0][set bomb-timer bomb-timer - 1]
 end
 to bomb-eat
