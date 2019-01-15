@@ -27,6 +27,7 @@ to setup
     set length-2 0
     set food-value 0
   ]
+  Mapes
   snake-setup
   world-setup
   reset-ticks
@@ -49,8 +50,8 @@ end
 ;;Snake life-cycle
 ;sets up the snakes
 to snake-setup
-  ask n-of Players patches [set snake? 1] ;player 1
-  ask one-of patches with [snake? = 1] [
+  ask n-of Players patches with [pcolor = 0] [set snake? 1] ;player 1
+  ask one-of patches with [snake? = 1 and pcolor = 0] [
     set pcolor blue
     set length-1 3
     set id 1
@@ -64,7 +65,7 @@ to snake-setup
     set tail-1 1
   ]
   if Players != 1 [ ;checks if there is more than 1 player
-    ask one-of patches with [snake? = 1 and pcolor != blue] [ ;player 2
+    ask one-of patches with [snake? = 1 and pcolor = 0] [ ;player 2
       set pcolor red
       set length-2 3
       set id 2
@@ -118,14 +119,14 @@ to snake-eat [long] ;how snakes eat
 end
 
 to snake-die
-  if member? pcolor [red blue yellow white] ;if a snake hits another or itself, it dies.
+  if member? pcolor [red blue yellow white 46.7 24 25] ;if a snake hits another or itself, it dies.
   [
     ask patches with [pcolor = [color] of myself] [set pcolor black]
     die
   ]
 end
 
-to reset-patches
+to reset-patches ;Asks All patches who are 0 to revert to basic.
   ask patches with [pcolor = 0]
   [set id 0 set snake? 0 set tail-1 0 set tail-2 0]
 end
@@ -201,6 +202,11 @@ to food-spawn-go ;spawns food as the game runs
 end
 ;
 
+;;Maps
+to MAPES
+  if maps = "Maze" [import-pcolors "Maze.png"]
+end
+
 ;;Modes (Bombs)
 to bomb-summon [n]
   if bomb-1 = 100 and n = 1[ask patches with [tail-1 = length-1][set tail-1 0 set pcolor white set bomb-timer 200] set bomb-1 0]
@@ -209,7 +215,7 @@ end
 to bomb-tick
   if bomb-1 != 100 [set bomb-1 bomb-1 + 2]
   if bomb-2 != 100 [set bomb-2 bomb-2 + 2]
-  ask patches with [bomb-timer = 0 and member? pcolor [orange yellow]][set pcolor 0]
+  ask patches with [bomb-timer = 0 and member? pcolor [24 yellow]][set pcolor 0]
   ask patches with [bomb-timer != 0][set bomb-timer bomb-timer - 1]
 end
 to bomb-eat
@@ -218,7 +224,7 @@ end
 to bomb-explode
   ask patches with [bomb-timer = 0 and pcolor = white]
   [ask patches in-radius 2[set pcolor yellow set bomb-timer 10]
-    ask patches in-radius 1[set pcolor orange set bomb-timer 10]
+    ask patches in-radius 1[set pcolor 24 set bomb-timer 10]
   ]
 end
 ;
@@ -269,7 +275,7 @@ BUTTON
 3
 10
 97
-119
+169
 NIL
 setup
 NIL
@@ -286,7 +292,7 @@ BUTTON
 252
 10
 348
-120
+171
 NIL
 go
 T
@@ -300,10 +306,10 @@ NIL
 1
 
 BUTTON
-57
-143
-123
-176
+64
+215
+130
+248
 NIL
 north 1
 NIL
@@ -317,10 +323,10 @@ NIL
 1
 
 BUTTON
-49
-292
-127
-325
+56
+364
+134
+397
 NIL
 north 2\n\n
 NIL
@@ -334,10 +340,10 @@ NIL
 1
 
 BUTTON
-49
-223
-128
-256
+56
+295
+135
+328
 NIL
 south 1\n
 NIL
@@ -351,10 +357,10 @@ NIL
 1
 
 BUTTON
-51
-383
-130
-416
+58
+455
+137
+488
 NIL
 south 2\n
 NIL
@@ -368,10 +374,10 @@ NIL
 1
 
 BUTTON
-98
-183
-167
-216
+105
+255
+174
+288
 NIL
 east 1
 NIL
@@ -385,10 +391,10 @@ NIL
 1
 
 BUTTON
-21
-183
-78
-216
+26
+257
+83
+290
 NIL
 west 1\n
 NIL
@@ -402,10 +408,10 @@ NIL
 1
 
 BUTTON
-96
-337
-166
-370
+103
+409
+173
+442
 NIL
 east 2\n
 NIL
@@ -419,10 +425,10 @@ NIL
 1
 
 BUTTON
-8
-337
-79
-370
+13
+411
+84
+444
 NIL
 west 2
 NIL
@@ -451,10 +457,10 @@ NIL
 HORIZONTAL
 
 BUTTON
-233
-184
-328
-217
+240
+256
+335
+289
 Bomb 1
 bomb-summon 1\n
 NIL
@@ -468,10 +474,10 @@ NIL
 1
 
 MONITOR
-228
-137
-313
-182
+235
+209
+320
+254
 bomb timer
 bomb-1
 17
@@ -479,10 +485,10 @@ bomb-1
 11
 
 MONITOR
-228
-293
-313
-338
+235
+365
+320
+410
 bomb timer
 Bomb-2
 17
@@ -490,10 +496,10 @@ Bomb-2
 11
 
 BUTTON
-237
-341
-332
-374
+244
+413
+339
+446
 Bomb 2
 bomb-summon 2
 NIL
@@ -516,6 +522,16 @@ Bombs?
 0
 1
 -1000
+
+CHOOSER
+106
+124
+244
+169
+Maps
+Maps
+"Basic" "Maze" "Ship"
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
