@@ -134,7 +134,7 @@ to snake-die
 end
 
 to reset-patches
-  ask patches with [pcolor = 0]
+  ask patches with [member? pcolor [56 57]]
   [set id 0 set snake? 0 set tail-1 0 set tail-2 0]
 end
 
