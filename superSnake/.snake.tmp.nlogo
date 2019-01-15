@@ -47,7 +47,7 @@ to go
     tick
   ]
 end
-;
+;;
 
 ;;Snake life-cycle
 ;sets up the snakes
@@ -259,7 +259,6 @@ end
 to-report Player2
   report count patches with[pcolor = red]
 end
-;
 @#$#@#$#@
 GRAPHICS-WINDOW
 383
@@ -297,7 +296,7 @@ Players
 Players
 1
 2
-2.0
+1.0
 1
 1
 NIL
