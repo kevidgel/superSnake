@@ -29,8 +29,11 @@ to setup
     set length-2 0
     set food-value 0
   ]
-  snake-setup
   world-setup
+  if not Warp?
+  [wrap?]
+  snake-setup
+  food-spawn food
   reset-ticks
 end
 
@@ -43,16 +46,17 @@ to go
     reset-patches
     if bombs? [bomb-tick
       bomb-explode]
+    victory
     tick
     tick
   ]
 end
-;;
+;
 
 ;;Snake life-cycle
 ;sets up the snakes
 to snake-setup
-  ask n-of Players patches [set snake? 1] ;player 1
+  ask patches at-points[ [0 1] [1 0] ] [set snake? 1] ;player 1
   ask one-of patches with [snake? = 1] [
     set pcolor blue
     set length-1 3
@@ -129,7 +133,7 @@ to snake-eat [long] ;how snakes eat
 end
 
 to snake-die
-  if member? pcolor [red blue yellow] ;if a snake hits another or itself, it dies.
+  if member? pcolor [red blue yellow orange 44] ;if a snake hits another or itself, it dies.
   [
     ask patches with [pcolor = [color] of myself] [
       if (pxcor + pycor) mod 2 = 0 [ set pcolor 56]
@@ -212,9 +216,8 @@ to food-spawn [num] ;spawns the food depending on the food slider
 end
 
 to world-setup ;sets up the world
-  ask patches [ if (pxcor + pycor) mod 2 = 0 [ set pcolor 56] ]
+  ask patches [ if (pxcor + pycor) mod 2 = 0 [ set pcolor 56] ] ;creates checkerboard pattern
   ask patches [ if (pxcor + pycor) mod 2 = 1 [ set pcolor 57] ]
-  food-spawn food
 end
 
 to food-spawn-go ;spawns food as the game runs
@@ -222,15 +225,19 @@ to food-spawn-go ;spawns food as the game runs
   [food-spawn 1]
 end
 ;
-
-;;Modes (Bombs)
-to bomb-summon [n]
+;;Modes: No Wrap
+to Wrap? ;if wrap is on, snakes cannot move through the border; otherwise, snakes can move through the border.
+  ask patches with [pxcor = max-pxcor or pxcor = min-pxcor or pycor = min-pycor or pycor = max-pycor]
+  [set pcolor 44]
+end
+;;Modes: Bombs
+to bomb-summon [n] ;asks snakes to create bombs on their tails.
   if bomb-1 = 100 and n = 1[ask patches with [tail-1 = length-1]
     [set tail-1 0 set pcolor white set bomb-timer 100
       sprout-bombs 1[set shape "bomb" set size 3 set color blue]] set bomb-1 0]
   if bomb-2 = 100 and n = 2[ask patches with [tail-2 = length-2]
     [set tail-2 0 set pcolor white set bomb-timer 100
-      sprout-bombs 1[set shape "bomb" set size 3 set color red]] set bomb-1 0]
+      sprout-bombs 1[set shape "bomb" set size 3 set color red]] set bomb-2 0]
 end
 to bomb-tick
   if bomb-1 != 100 [set bomb-1 bomb-1 + 2]
@@ -251,20 +258,30 @@ to bomb-explode
 end
 ;
 
-;;Scores
-to-report Player1
+;;Scores / Victory
+to-report Player1 ;reports length of player 1
   report count patches with[pcolor = blue]
 end
 
-to-report Player2
+to-report Player2 ;
   report count patches with[pcolor = red]
 end
+
+to victory
+  if Players > 1 [
+    if (not any? snakes-1)
+    [ask snakes-2 [set shape "snake-winner"]]
+    if (not any? snakes-2)
+    [ask snakes-1 [set shape "snake-winner"]]
+  ]
+end
+;
 @#$#@#$#@
 GRAPHICS-WINDOW
-383
-20
-820
-458
+397
+10
+834
+448
 -1
 -1
 13.0
@@ -290,13 +307,13 @@ ticks
 SLIDER
 100
 11
-247
+292
 44
 Players
 Players
 1
 2
-1.0
+2.0
 1
 1
 NIL
@@ -320,9 +337,9 @@ NIL
 1
 
 BUTTON
-252
+295
 10
-348
+391
 120
 Go
 go
@@ -337,10 +354,10 @@ NIL
 1
 
 BUTTON
-57
-143
-128
-176
+62
+193
+133
+226
 Up 1
 north 1
 NIL
@@ -354,10 +371,10 @@ NIL
 1
 
 BUTTON
-49
-292
-127
-325
+54
+342
+132
+375
 Up 2
 north 2\n\n
 NIL
@@ -371,10 +388,10 @@ NIL
 1
 
 BUTTON
-49
-223
-144
-256
+54
+273
+149
+306
 Down 1
 south 1\n
 NIL
@@ -388,10 +405,10 @@ NIL
 1
 
 BUTTON
-51
-383
-146
-416
+56
+433
+151
+466
 Down 2
 south 2\n
 NIL
@@ -405,10 +422,10 @@ NIL
 1
 
 BUTTON
-98
-183
-188
-216
+103
+233
+193
+266
 Right 1
 east 1
 NIL
@@ -422,10 +439,10 @@ NIL
 1
 
 BUTTON
-7
-184
-85
-217
+12
+234
+90
+267
 Left 1
 west 1
 NIL
@@ -439,10 +456,10 @@ NIL
 1
 
 BUTTON
-96
-337
-186
-370
+101
+387
+191
+420
 Right 2
 east 2\n
 NIL
@@ -456,10 +473,10 @@ NIL
 1
 
 BUTTON
-8
-337
-86
-370
+13
+387
+91
+420
 Left 2
 west 2
 NIL
@@ -475,23 +492,23 @@ NIL
 SLIDER
 101
 50
-248
+292
 83
 Food
 Food
 1
 5
-3.0
+4.0
 1
 1
 NIL
 HORIZONTAL
 
 BUTTON
-233
-184
-328
-217
+238
+234
+333
+267
 Bomb 1
 bomb-summon 1\n
 NIL
@@ -505,10 +522,10 @@ NIL
 1
 
 MONITOR
-228
-137
-313
-182
+233
+187
+318
+232
 Cooldown
 100 - bomb-1
 17
@@ -516,10 +533,10 @@ Cooldown
 11
 
 MONITOR
-228
-293
-313
-338
+233
+343
+318
+388
 Cooldown
 100 - Bomb-2
 17
@@ -527,10 +544,10 @@ Cooldown
 11
 
 BUTTON
-237
-341
-332
-374
+242
+391
+337
+424
 Bomb 2
 bomb-summon 2
 NIL
@@ -546,19 +563,19 @@ NIL
 SWITCH
 100
 87
-248
+200
 120
 Bombs?
 Bombs?
-0
+1
 1
 -1000
 
 MONITOR
-222
-222
-279
-267
+227
+272
+284
+317
 NIL
 Player1
 17
@@ -566,22 +583,33 @@ Player1
 11
 
 MONITOR
-223
-376
-280
-421
+228
+426
+285
+471
 NIL
 Player2
 17
 1
 11
 
+SWITCH
+202
+87
+292
+120
+Warp?
+Warp?
+0
+1
+-1000
+
 @#$#@#$#@
 ## WHAT IS IT?
 
 This model will be a modified version of the classic game Snake. 
 Snake is a game where a “snake” moves around the world and eats food pellets in order to grow. 
-The snake can only move in the four cardinal directions, and if the snake manages to hit itself, it “dies.” If its head manages to hit other snakes, it dies.
+In this model, there is an option to play multiplayer snake. There is also a mode called "bombs," in which snakes drop bombs and try to kill each other.
 
 ## CONTROLS
 
@@ -591,6 +619,9 @@ O will cause snake 2 to drop bombs.
 Sliders for food and number of players.
 Setup creates the snakes and world.
 Go starts the game.
+
+The switch "Bombs?" will toggle the bombs mode on or off. 
+The switch "Warp?" will toggle if the world wraps or not. 
 
 ## HOW IT WORKS
 
@@ -622,6 +653,14 @@ The snake's head owns the highest length-x. Each time it eats, its length-x incr
 ## COMMENTS
 
 Overall, this project is using the classic game Snake and putting an interesting twist to it in order to make it more fun. 
+
+## NEW IN VERSION 2.0
++added bombs mode
++added cake 
++added victory crown for winning snake
++snake is slowed down
++new background for easy viewing
++organized interface 
 
 ## CREDITS AND REFERENCES
 
@@ -866,6 +905,23 @@ Rectangle -16777216 true false 165 135 180 165
 Rectangle -7500403 true false 131 90 135 111
 Rectangle -7500403 true false 165 90 169 107
 Polygon -1 true false 120 75 135 60 150 75 165 60 180 75 120 75
+
+snake-winner
+true
+13
+Polygon -2064490 true true 74 73 74 223 224 223 224 73 74 73
+Rectangle -1 true false 165 135 195 180
+Rectangle -1 true false 105 135 135 180
+Rectangle -16777216 true false 120 135 135 165
+Rectangle -16777216 true false 165 135 180 165
+Rectangle -7500403 true false 131 90 135 111
+Rectangle -7500403 true false 165 90 169 107
+Polygon -1 true false 120 75 135 60 150 75 165 60 180 75 120 75
+Polygon -1184463 true false 225 225
+Polygon -1184463 true false 225 195 75 195 75 270 105 240 150 270 195 240 225 270 225 195
+Polygon -2674135 true false 150 210 135 240 150 255 165 240 150 210
+Polygon -13791810 true false 210 210 210 240 195 225 210 210
+Polygon -13791810 true false 90 210 90 240 105 225 90 210
 
 square
 false

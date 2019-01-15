@@ -29,11 +29,8 @@ to setup
     set length-2 0
     set food-value 0
   ]
-  world-setup
-  if not Warp?
-  [wrap?]
   snake-setup
-  food-spawn food
+  world-setup
   reset-ticks
 end
 
@@ -46,7 +43,6 @@ to go
     reset-patches
     if bombs? [bomb-tick
       bomb-explode]
-    victory
     tick
     tick
   ]
@@ -56,7 +52,7 @@ end
 ;;Snake life-cycle
 ;sets up the snakes
 to snake-setup
-  ask patches at-points[ [0 1] [1 0] ] [set snake? 1] ;player 1
+  ask n-of Players patches [set snake? 1] ;player 1
   ask one-of patches with [snake? = 1] [
     set pcolor blue
     set length-1 3
@@ -133,7 +129,7 @@ to snake-eat [long] ;how snakes eat
 end
 
 to snake-die
-  if member? pcolor [red blue yellow orange 44] ;if a snake hits another or itself, it dies.
+  if member? pcolor [red blue yellow] ;if a snake hits another or itself, it dies.
   [
     ask patches with [pcolor = [color] of myself] [
       if (pxcor + pycor) mod 2 = 0 [ set pcolor 56]
@@ -218,6 +214,7 @@ end
 to world-setup ;sets up the world
   ask patches [ if (pxcor + pycor) mod 2 = 0 [ set pcolor 56] ]
   ask patches [ if (pxcor + pycor) mod 2 = 1 [ set pcolor 57] ]
+  food-spawn food
 end
 
 to food-spawn-go ;spawns food as the game runs
@@ -225,19 +222,15 @@ to food-spawn-go ;spawns food as the game runs
   [food-spawn 1]
 end
 ;
-;;Modes: No Wrap
-to Wrap?
-  ask patches with [pxcor = max-pxcor or pxcor = min-pxcor or pycor = min-pycor or pycor = max-pycor]
-  [set pcolor 44]
-end
-;;Modes: Bombs
+
+;;Modes (Bombs)
 to bomb-summon [n]
   if bomb-1 = 100 and n = 1[ask patches with [tail-1 = length-1]
     [set tail-1 0 set pcolor white set bomb-timer 100
       sprout-bombs 1[set shape "bomb" set size 3 set color blue]] set bomb-1 0]
   if bomb-2 = 100 and n = 2[ask patches with [tail-2 = length-2]
     [set tail-2 0 set pcolor white set bomb-timer 100
-      sprout-bombs 1[set shape "bomb" set size 3 set color red]] set bomb-2 0]
+      sprout-bombs 1[set shape "bomb" set size 3 set color red]] set bomb-1 0]
 end
 to bomb-tick
   if bomb-1 != 100 [set bomb-1 bomb-1 + 2]
@@ -258,7 +251,7 @@ to bomb-explode
 end
 ;
 
-;;Scores / Victory
+;;Scores
 to-report Player1
   report count patches with[pcolor = blue]
 end
@@ -266,22 +259,13 @@ end
 to-report Player2
   report count patches with[pcolor = red]
 end
-
-to victory
-  if Players > 1 [
-    if (not any? snakes-1)
-    [ask snakes-2 [set shape "snake-winner"]]
-    if (not any? snakes-2)
-    [ask snakes-1 [set shape "snake-winner"]]
-  ]
-end
 ;
 @#$#@#$#@
 GRAPHICS-WINDOW
-397
-10
-834
-448
+383
+20
+820
+458
 -1
 -1
 13.0
@@ -307,7 +291,7 @@ ticks
 SLIDER
 100
 11
-292
+247
 44
 Players
 Players
@@ -337,9 +321,9 @@ NIL
 1
 
 BUTTON
-295
+252
 10
-391
+348
 120
 Go
 go
@@ -354,10 +338,10 @@ NIL
 1
 
 BUTTON
-62
-193
-133
-226
+57
+143
+128
+176
 Up 1
 north 1
 NIL
@@ -371,10 +355,10 @@ NIL
 1
 
 BUTTON
-54
-342
-132
-375
+49
+292
+127
+325
 Up 2
 north 2\n\n
 NIL
@@ -388,10 +372,10 @@ NIL
 1
 
 BUTTON
-54
-273
-149
-306
+49
+223
+144
+256
 Down 1
 south 1\n
 NIL
@@ -405,10 +389,10 @@ NIL
 1
 
 BUTTON
-56
-433
-151
-466
+51
+383
+146
+416
 Down 2
 south 2\n
 NIL
@@ -422,10 +406,10 @@ NIL
 1
 
 BUTTON
-103
-233
-193
-266
+98
+183
+188
+216
 Right 1
 east 1
 NIL
@@ -439,10 +423,10 @@ NIL
 1
 
 BUTTON
-12
-234
-90
-267
+7
+184
+85
+217
 Left 1
 west 1
 NIL
@@ -456,10 +440,10 @@ NIL
 1
 
 BUTTON
-101
-387
-191
-420
+96
+337
+186
+370
 Right 2
 east 2\n
 NIL
@@ -473,10 +457,10 @@ NIL
 1
 
 BUTTON
-13
-387
-91
-420
+8
+337
+86
+370
 Left 2
 west 2
 NIL
@@ -492,23 +476,23 @@ NIL
 SLIDER
 101
 50
-292
+248
 83
 Food
 Food
 1
 5
-4.0
+3.0
 1
 1
 NIL
 HORIZONTAL
 
 BUTTON
-238
-234
-333
-267
+233
+184
+328
+217
 Bomb 1
 bomb-summon 1\n
 NIL
@@ -522,10 +506,10 @@ NIL
 1
 
 MONITOR
-233
-187
-318
-232
+228
+137
+313
+182
 Cooldown
 100 - bomb-1
 17
@@ -533,10 +517,10 @@ Cooldown
 11
 
 MONITOR
-233
-343
-318
-388
+228
+293
+313
+338
 Cooldown
 100 - Bomb-2
 17
@@ -544,10 +528,10 @@ Cooldown
 11
 
 BUTTON
-242
-391
-337
-424
+237
+341
+332
+374
 Bomb 2
 bomb-summon 2
 NIL
@@ -563,19 +547,19 @@ NIL
 SWITCH
 100
 87
-200
+248
 120
 Bombs?
 Bombs?
-1
+0
 1
 -1000
 
 MONITOR
-227
-272
-284
-317
+222
+222
+279
+267
 NIL
 Player1
 17
@@ -583,26 +567,15 @@ Player1
 11
 
 MONITOR
-228
-426
-285
-471
+223
+376
+280
+421
 NIL
 Player2
 17
 1
 11
-
-SWITCH
-202
-87
-292
-120
-Warp?
-Warp?
-0
-1
--1000
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -895,23 +868,6 @@ Rectangle -7500403 true false 131 90 135 111
 Rectangle -7500403 true false 165 90 169 107
 Polygon -1 true false 120 75 135 60 150 75 165 60 180 75 120 75
 
-snake-winner
-true
-13
-Polygon -2064490 true true 74 73 74 223 224 223 224 73 74 73
-Rectangle -1 true false 165 135 195 180
-Rectangle -1 true false 105 135 135 180
-Rectangle -16777216 true false 120 135 135 165
-Rectangle -16777216 true false 165 135 180 165
-Rectangle -7500403 true false 131 90 135 111
-Rectangle -7500403 true false 165 90 169 107
-Polygon -1 true false 120 75 135 60 150 75 165 60 180 75 120 75
-Polygon -1184463 true false 225 225
-Polygon -1184463 true false 225 195 75 195 75 270 105 240 150 270 195 240 225 270 225 195
-Polygon -2674135 true false 150 210 135 240 150 255 165 240 150 210
-Polygon -13791810 true false 210 210 210 240 195 225 210 210
-Polygon -13791810 true false 90 210 90 240 105 225 90 210
-
 square
 false
 0
@@ -1009,7 +965,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.0.1
+NetLogo 6.0.4
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
