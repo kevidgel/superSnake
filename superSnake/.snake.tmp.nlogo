@@ -201,7 +201,7 @@ to food-spawn [num] ;spawns the food depending on the food slider
   ask n-of num patches with [pcolor = 56 or pcolor = 57] [
     set food-value (random 3) + 1
     set pcolor scale-color brown food-value -3 6
-    sprout-cakes 1  [set shape "cake" set size 3]
+    sprout-cakes 1  [set shape "cake" set size ]
   ]
 end
 
