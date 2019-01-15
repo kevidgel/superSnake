@@ -18,6 +18,7 @@ patches-own [
 breed [snakes-1 snake-1]
 breed [snakes-2 snake-2]
 breed [cakes cake]
+breed [bombs bomb]
 
 ;;Main functions
 ;Setup sets up world
@@ -35,7 +36,7 @@ end
 
 ;Go runs the game (model)
 to go
-  if count turtles > 0 [
+  if any? snakes-1 or any? snakes-2[
     if any? snakes-1 [snake-1move]
     if any? snakes-2 [snake-2move]
     food-spawn-go
@@ -128,7 +129,7 @@ to snake-eat [long] ;how snakes eat
 end
 
 to snake-die
-  if member? pcolor [red blue yellow white] ;if a snake hits another or itself, it dies.
+  if member? pcolor [red blue yellow] ;if a snake hits another or itself, it dies.
   [
     ask patches with [pcolor = [color] of myself] [
       if (pxcor + pycor) mod 2 = 0 [ set pcolor 56]
@@ -136,6 +137,11 @@ to snake-die
     ]
     die
   ]
+  if pcolor = white
+  [
+    set bomb-timer 0 bomb-explode
+  ]
+
 end
 
 to reset-patches
@@ -219,24 +225,27 @@ end
 
 ;;Modes (Bombs)
 to bomb-summon [n]
-  if bomb-1 = 100 and n = 1[ask patches with [tail-1 = length-1][set tail-1 0 set pcolor white set bomb-timer 200] set bomb-1 0]
-  if bomb-2 = 100 and n = 2[ask patches with [tail-2 = length-2][set tail-2 0 set pcolor white set bomb-timer 200] set bomb-1 0]
+  if bomb-1 = 100 and n = 1[ask patches with [tail-1 = length-1]
+    [set tail-1 0 set pcolor white set bomb-timer 100
+      sprout-bombs 1[set shape "bomb" set size 2]] set bomb-1 0]
+  if bomb-2 = 100 and n = 2[ask patches with [tail-2 = length-2]
+    [set tail-2 0 set pcolor white set bomb-timer 100
+      sprout-bombs 1[set shape "bomb" set size 2]] set bomb-1 0]
 end
 to bomb-tick
   if bomb-1 != 100 [set bomb-1 bomb-1 + 2]
   if bomb-2 != 100 [set bomb-2 bomb-2 + 2]
   ask patches with [bomb-timer = 0 and member? pcolor [orange yellow]][
     if (pxcor + pycor) mod 2 = 0 [ set pcolor 56]
-      if (pxcor + pycor) mod 2 = 1 [ set pcolor 57]
+    if (pxcor + pycor) mod 2 = 1 [ set pcolor 57]
   ]
   ask patches with [bomb-timer != 0][set bomb-timer bomb-timer - 1]
-end
-to bomb-eat
 end
 
 to bomb-explode
   ask patches with [bomb-timer = 0 and pcolor = white]
-  [ask patches in-radius 2[set pcolor yellow set bomb-timer 10]
+  [ask bombs in-radius 2[die]
+    ask patches in-radius 2[set pcolor yellow set bomb-timer 10]
     ask patches in-radius 1[set pcolor orange set bomb-timer 10]
   ]
 end
@@ -603,6 +612,16 @@ true
 0
 Polygon -7500403 true true 150 0 0 150 105 150 105 293 195 293 195 150 300 150
 
+bomb
+false
+0
+Circle -7500403 true true 74 93 153
+Rectangle -1 true false 172 140 194 159
+Polygon -2674135 true false 147 60 106 34 144 68
+Rectangle -6459832 true false 135 60 150 90
+Rectangle -7500403 true true 120 75 180 105
+Circle -2674135 true false -44 160 16
+
 box
 false
 0
@@ -657,11 +676,6 @@ Circle -16777216 true false 30 180 90
 Polygon -16777216 true false 162 80 132 78 134 135 209 135 194 105 189 96 180 89
 Circle -7500403 true true 47 195 58
 Circle -7500403 true true 195 195 58
-
-circle
-false
-0
-Circle -7500403 true true 0 0 300
 
 circle 2
 false
