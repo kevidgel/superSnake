@@ -261,9 +261,9 @@ end
 to bomb-explode
   ask patches with [bomb-timer = 0 and pcolor = white]
   [ask bombs in-radius 2[die]
-    ask patches in-radius 3[reset-patches ask turtles-here [die]
+    ask patches in-radius 3[reset-patches ask cakes-here [die]
       set pcolor yellow set bomb-timer 10]
-    ask patches in-radius 2[set pcolor orange set bomb-timer 8]
+    ask patches in-radius 2[set pcolor orange set bomb-timer 9]
   ]
 end
 ;
@@ -508,7 +508,7 @@ Food
 Food
 1
 5
-4.0
+5.0
 1
 1
 NIL
