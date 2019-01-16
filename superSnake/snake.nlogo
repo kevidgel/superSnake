@@ -48,7 +48,7 @@ to go
     if bombs? [bomb-tick
       bomb-explode]
     victory
-    tick
+    wait (10 - speed) * .02
     tick
   ]
 end
@@ -260,7 +260,7 @@ to bomb-tick
     if (pxcor + pycor) mod 2 = 0 [ set pcolor 56]
     if (pxcor + pycor) mod 2 = 1 [ set pcolor 57]
   ]
-  ask patches with [bomb-timer != 0][set bomb-timer bomb-timer - 1]
+  ask patches with [bomb-timer != 0][set bomb-timer bomb-timer - 2]
 end
 
 to bomb-explode
@@ -581,7 +581,7 @@ SWITCH
 120
 Bombs?
 Bombs?
-1
+0
 1
 -1000
 
@@ -607,26 +607,30 @@ Player2
 1
 11
 
-SWITCH
-202
-87
-292
-120
-Warp?
-Warp?
-0
-1
--1000
-
 CHOOSER
-140
-131
-278
-176
+202
+85
+294
+130
 Maps
 Maps
 "Plain" "Border" "Battlefield" "Hideout"
-3
+0
+
+SLIDER
+65
+123
+200
+156
+speed
+speed
+1
+10
+6.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -646,6 +650,8 @@ Go starts the game.
 
 The switch "Bombs?" will toggle the bombs mode on or off. 
 You can choose which map to play on using the chooser "Maps." 
+
+Bombs can destroy walls.
 
 ## HOW IT WORKS
 
