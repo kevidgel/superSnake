@@ -247,20 +247,20 @@ end
 ;;Modes: Bombs
 to bomb-summon [n] ;asks snakes to create bombs on their tails.
   if bomb-1 = 100 and n = 1[ask patches with [tail-1 = length-1]
-    [set tail-1 0 set pcolor white set bomb-timer 100
+    [set tail-1 0 set pcolor white set bomb-timer 20
       sprout-bombs 1[set shape "bomb" set size 3 set color blue]] set bomb-1 0]
   if bomb-2 = 100 and n = 2[ask patches with [tail-2 = length-2]
-    [set tail-2 0 set pcolor white set bomb-timer 100
+    [set tail-2 0 set pcolor white set bomb-timer 20
       sprout-bombs 1[set shape "bomb" set size 3 set color red]] set bomb-2 0]
 end
 to bomb-tick
-  if bomb-1 != 100 [set bomb-1 bomb-1 + 2]
-  if bomb-2 != 100 [set bomb-2 bomb-2 + 2]
+  if bomb-1 != 100 [set bomb-1 bomb-1 + 4]
+  if bomb-2 != 100 [set bomb-2 bomb-2 + 4]
   ask patches with [bomb-timer = 0 and member? pcolor [orange yellow]][
     if (pxcor + pycor) mod 2 = 0 [ set pcolor 56]
     if (pxcor + pycor) mod 2 = 1 [ set pcolor 57]
   ]
-  ask patches with [bomb-timer != 0][set bomb-timer bomb-timer - 2]
+  ask patches with [bomb-timer != 0][set bomb-timer bomb-timer - 1]
 end
 
 to bomb-explode
