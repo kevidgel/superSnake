@@ -146,7 +146,8 @@ end
 
 to reset-patches
   set pcolor (pxcor + pycor) mod 2 + 56
-  set id 0 set snake? 0 set tail-1 0 set tail-2 0
+  set id 0 set snake? 0 set tail-1 0 set tail-2 0 set food-value 0
+  ask turtles0
 end
 
 ;
@@ -253,15 +254,16 @@ to bomb-tick
   ask patches with [bomb-timer = 0 and member? pcolor [orange yellow]][
     Reset-patches
   ]
-
+  ask bombs-on patches with [bomb-timer < 10]
+  [set color color + (bomb-timer mod 3 - 1) * -4]
   ask patches with [bomb-timer != 0][set bomb-timer bomb-timer - 1]
 end
 
 to bomb-explode
   ask patches with [bomb-timer = 0 and pcolor = white]
   [ask bombs in-radius 2[die]
-    ask patches in-radius 3[set pcolor yellow set bomb-timer 10]
-    ask patches in-radius 2[set pcolor orange set bomb-timer 10]
+    ask patches in-radius 3[reset-patches set pcolor yellow set bomb-timer 10]
+    ask patches in-radius 2[set pcolor orange set bomb-timer 8]
   ]
 end
 ;
