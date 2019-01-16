@@ -30,8 +30,9 @@ to setup
     set food-value 0
   ]
   world-setup
-  if not Warp?
-  [wrap?]
+  if Maps = "Border" [border_map]
+  if Maps = "Battlefield" [battlefield_map]
+  if Maps = "Hideout" [hideout_map]
   snake-setup
   food-spawn food
   reset-ticks
@@ -224,12 +225,25 @@ to food-spawn-go ;spawns food as the game runs
   if count patches with [food-value > 0] < food
   [food-spawn 1]
 end
-;
-;;Modes: No Wrap
-to Wrap? ;if wrap is on, snakes cannot move through the border; otherwise, snakes can move through the border.
+
+;;Maps- using chooser "Maps," creates different maps with diff
+to border_map
   ask patches with [pxcor = max-pxcor or pxcor = min-pxcor or pycor = min-pycor or pycor = max-pycor]
   [set pcolor 44]
 end
+
+to battlefield_map
+  ask patches with [pxcor = max-pxcor or pxcor = min-pxcor or (abs pycor < 13 and abs pxcor = 11) or (abs pycor > 4 and abs pxcor = 8)]
+  [set pcolor 44]
+end
+
+to hideout_map
+  ask patches with [(abs pxcor = max-pxcor and abs pycor > 4) or (abs pycor = max-pycor and abs pxcor > 4)
+  or (abs pxcor = 4 and abs pycor > 6) or (abs pycor = 4 and abs pxcor > 6)
+  or (8 < abs pxcor and abs pxcor < 12 and 8 < abs pycor and abs pycor < 12)]
+  [set pcolor 44]
+end
+
 ;;Modes: Bombs
 to bomb-summon [n] ;asks snakes to create bombs on their tails.
   if bomb-1 = 100 and n = 1[ask patches with [tail-1 = length-1]
@@ -263,11 +277,11 @@ to-report Player1 ;reports length of player 1
   report count patches with[pcolor = blue]
 end
 
-to-report Player2 ;
+to-report Player2 ;reports length of player 2
   report count patches with[pcolor = red]
 end
 
-to victory
+to victory ;victory crown for snake
   if Players > 1 [
     if (not any? snakes-1)
     [ask snakes-2 [set shape "snake-winner"]]
@@ -603,6 +617,16 @@ Warp?
 0
 1
 -1000
+
+CHOOSER
+140
+131
+278
+176
+Maps
+Maps
+"Plain" "Border" "Battlefield" "Hideout"
+3
 
 @#$#@#$#@
 ## WHAT IS IT?
