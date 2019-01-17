@@ -5,6 +5,8 @@ globals[
   length-2 ;length of snake 2
   bomb-2; cooldown for 2nd snake.
   bomb-1; cooldown for 1st snake.
+  Restrict-1; Which patch colors kill snake.
+  Restrict-2; for snake 2
 ]
 
 patches-own [
@@ -35,6 +37,7 @@ to setup
   if Maps = "Hideout" [hideout_map]
   snake-setup
   food-spawn food
+  Mode
   reset-ticks
 end
 
@@ -91,7 +94,7 @@ to snake-1move ;controls how player 1 moves
   ask snake-1 0 [
     move-to patch-at (item 0 inputxy-1)(item 1 inputxy-1) ;moves to patch depending on controller input
     snake-eat 1
-    snake-die
+    snake-die restrict-1
     set pcolor blue set snake? 1 set id 1
     set heading xy-to-heading inputxy-1
   ]
@@ -105,7 +108,7 @@ to snake-2move ;controls how player 2 moves
   ask snake-2 1 [
     move-to patch-at (item 0 inputxy-2)(item 1 inputxy-2)  ;moves to patch depending on controller input
     snake-eat 2
-    snake-die
+    snake-die restrict-2
     set pcolor red set snake? 1 set id 2
     set heading xy-to-heading inputxy-2
   ]
@@ -129,8 +132,8 @@ to snake-eat [long] ;how snakes eat
   ]
 end
 
-to snake-die
-  if member? pcolor [red blue yellow orange 44];if a snake hits another or itself, it dies.
+to snake-die [n]
+  if member? pcolor n;if a snake hits another or itself, it dies.
   [
     ask patches with [pcolor = [color] of myself] [
       Reset-patches
@@ -299,7 +302,19 @@ to victory ;victory crown for snake
     [ask snakes-1 [set shape "snake-winner"]]
   ]
 end
-;
+;Gamemodes Like Mini-Games.
+;;;VERY IMPORTANT PLACE.
+
+to Mode
+  if Gamemode = "Normal"
+  [set restrict-1 [red blue yellow orange 44]
+    set restrict-2 restrict-1
+  ]
+  if Gamemode = "No Competition"
+  [set restrict-1 [blue yellow orange 44]
+    set restrict-2 [red yellow orange 44]
+  ]
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 397
@@ -647,10 +662,37 @@ CHOOSER
 72
 1074
 117
-Modes
-Modes
+Gamemode
+Gamemode
 "Normal" "No Competition" "This Has Not yet been implemented"
-0
+1
+
+TEXTBOX
+979
+20
+1151
+68
+EXTRA Buttons\nWe are not responsible for the damage done to your device
+11
+0.0
+1
+
+BUTTON
+976
+144
+1132
+177
+CAKE APOCALYPSE
+set length-1 0\nset length-2 0
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
