@@ -365,7 +365,7 @@ Players
 Players
 1
 2
-2.0
+1.0
 1
 1
 NIL
@@ -678,7 +678,7 @@ CHOOSER
 Gamemode
 Gamemode
 "Normal" "No Competition" "Friendly World Dig" "This Has Not yet been implemented"
-0
+2
 
 TEXTBOX
 1293
@@ -708,25 +708,36 @@ NIL
 1
 
 @#$#@#$#@
+# SNAKE BUT BETTER
+
 ## WHAT IS IT?
 
-This model will be a modified version of the classic game Snake. 
-Snake is a game where a “snake” moves around the world and eats food pellets in order to grow. 
-In this model, there is an option to play multiplayer snake. There is also a mode called "bombs," in which snakes drop bombs and try to kill each other.
+This model will be a BETTER version of the classic game Snake. 
+The basics will remain, eating food to grow longer and killing yourself if you ram into yourself. HOWEVER, there will be huge changes
+This game will have GAMEMODES, BOMBS, cool SPRITES, MULTIPLAYER, and MUCH MUCH MORE.
+You can select to play by yourself or with friends if you have any.
 
 ## CONTROLS
 
-WASD to move snake 1. IJKL to move snake 2.
-E will cause snake 1 to drop bombs.
-O will cause snake 2 to drop bombs.
+WASD will change direction of snake 1. 
+IJKL to do the same for snake 2.
+E & 0 will cause snake 1 & 2, respectively, to drop bombs.
 Sliders for food and number of players.
 Setup creates the snakes and world.
 Go starts the game.
 
-The switch "Bombs?" will toggle the bombs mode on or off. 
-You can choose which map to play on using the chooser "Maps." 
+##INTERFACE DETAILS
+The switch "Bombs?" lets you decide if you want BOMBS or not. 
+You can choose which MAP to play on using the chooser "Maps."(more planned for future)
+GAMEMODES can be selected from the right side. (only 3 right now -V3)
 
-Bombs can destroy walls.
+## GAMEMODES
+### Normal -
+Our original game. You can place bombs. Kill the other player. Eat food.
+### No Competition- 
+Normal except you cannot kill the other player. But you can still blow them up.
+### Friendly World Dig- 
+SUPER CASUAL. only way you can die is walking into a stone. Blow up sones together and you win when all stones are removed.
 
 ## HOW IT WORKS
 
@@ -758,6 +769,13 @@ The snake's head owns the highest length-x. Each time it eats, its length-x incr
 ## COMMENTS
 
 Overall, this project is using the classic game Snake and putting an interesting twist to it in order to make it more fun. 
+
+## NEW IN VERSION 3.0
++added GAMEMODES
++VICTORY MESSAGE
++fixed bomb sprite
++Amount of wins counted
++BOMB will blow up tails
 
 ## NEW IN VERSION 2.0
 +added bombs mode
