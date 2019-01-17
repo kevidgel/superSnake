@@ -32,17 +32,12 @@ to setup
   variable-setup
   cp
   ct
-  ask patches [
-    set length-1 0
-    set length-2 0
-    set food-value 0
-  ]
   world-setup
   if Maps = "Border" [border_map]
   if Maps = "Battlefield" [battlefield_map]
   if Maps = "Hideout" [hideout_map]
   snake-setup
-  food-spawn food
+  Mode
   reset-ticks
 end
 
@@ -53,6 +48,8 @@ to variable-setup ;workaround for ca. Not all globals will be cleared, only some
   set length-2 0
   set bomb-2 0
   set bomb-1 0
+  set restrict-1 []
+  set restrict-1 []
   set gamewinner 0
   ifelse reset? = 0 [
     set wins [0 0]
@@ -67,10 +64,9 @@ to go
   if any? snakes-1 or any? snakes-2[
     if any? snakes-1 [snake-1move]
     if any? snakes-2 [snake-2move]
-    food-spawn-go
+    Mode-go
     if bombs? [bomb-tick
       bomb-explode]
-    victory
     wait (10 - speed) * .02
     tick
   ]
@@ -115,7 +111,7 @@ to snake-1move ;controls how player 1 moves
   ask snake-1 0 [
     move-to patch-at (item 0 inputxy-1)(item 1 inputxy-1) ;moves to patch depending on controller input
     snake-eat 1
-    snake-die
+    snake-die restrict-1
     set pcolor blue set snake? 1 set id 1
     set heading xy-to-heading inputxy-1
   ]
@@ -129,7 +125,7 @@ to snake-2move ;controls how player 2 moves
   ask snake-2 1 [
     move-to patch-at (item 0 inputxy-2)(item 1 inputxy-2)  ;moves to patch depending on controller input
     snake-eat 2
-    snake-die
+    snake-die restrict-2
     set pcolor red set snake? 1 set id 2
     set heading xy-to-heading inputxy-2
   ]
@@ -153,8 +149,8 @@ to snake-eat [long] ;how snakes eat
   ]
 end
 
-to snake-die
-  if member? pcolor [red blue yellow orange 44];if a snake hits another or itself, it dies.
+to snake-die [n]
+  if member? pcolor n;if a snake hits another or itself, it dies.
   [
     ask patches with [pcolor = [color] of myself] [
       Reset-patches
@@ -379,7 +375,7 @@ end
 
 to Mode-go
   if member? gamemode ["Normal" "No Competition"]
-    [food-spawn-go]
+    [food-spawn-go Victory]
   if Gamemode = "Friendly World Dig" and
   count patches with [member? pcolor [4 5 6]] = 0
   [set gamemode "normal"
@@ -737,7 +733,7 @@ CHOOSER
 Gamemode
 Gamemode
 "Normal" "No Competition" "Friendly World Dig"
-2
+1
 
 BUTTON
 973
