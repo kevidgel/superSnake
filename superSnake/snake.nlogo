@@ -26,17 +26,11 @@ breed [bombs bomb]
 ;Setup sets up world
 to setup
   ca
-  ask patches [
-    set length-1 0
-    set length-2 0
-    set food-value 0
-  ]
   world-setup
   if Maps = "Border" [border_map]
   if Maps = "Battlefield" [battlefield_map]
   if Maps = "Hideout" [hideout_map]
   snake-setup
-  food-spawn food
   Mode
   reset-ticks
 end
@@ -46,7 +40,7 @@ to go
   if any? snakes-1 or any? snakes-2[
     if any? snakes-1 [snake-1move]
     if any? snakes-2 [snake-2move]
-    food-spawn-go
+    Mode-go
     if bombs? [bomb-tick
       bomb-explode]
     victory
@@ -127,7 +121,7 @@ to snake-eat [long] ;how snakes eat
     Reset-patches
     ask patch-here [
       set food-value 0
-      ask cakes with [xcor = [pxcor] of myself and ycor = [pycor] of myself] [die]
+      ask cakes-here [die]
     ] ;resets patch food-value
   ]
 end
@@ -309,10 +303,29 @@ to Mode
   if Gamemode = "Normal"
   [set restrict-1 [red blue yellow orange 44]
     set restrict-2 restrict-1
+    food-spawn food
   ]
   if Gamemode = "No Competition"
   [set restrict-1 [blue yellow orange 44]
     set restrict-2 [red yellow orange 44]
+    food-spawn food
+  ]
+  if Gamemode = "Friendly World Dig"
+  [ask patches [Reset-patches]
+    ask n-of 35 patches with [abs (pxcor) > 4]
+    [set pcolor 4 + random 3]
+    set restrict-1 [4 5 6]
+    set restrict-2 [4 5 6]]
+end
+
+to Mode-go
+  if member? gamemode ["Normal" "No Competition"]
+    [food-spawn-go]
+  if Gamemode = "Friendly World Dig" and
+  count patches with [member? pcolor [4 5 6]] = 0
+  [set gamemode "normal"
+    set food 3
+    ask turtles [set shape "snake-winner"]
   ]
 end
 @#$#@#$#@
@@ -658,30 +671,30 @@ NIL
 HORIZONTAL
 
 CHOOSER
-982
-72
-1074
-117
+959
+41
+1051
+86
 Gamemode
 Gamemode
-"Normal" "No Competition" "This Has Not yet been implemented"
-1
+"Normal" "No Competition" "Friendly World Dig" "This Has Not yet been implemented"
+0
 
 TEXTBOX
-979
-20
-1151
-68
-EXTRA Buttons\nWe are not responsible for the damage done to your device
+1293
+23
+1465
+71
+Developer Buttons\nWe are not responsible for the damage done to your device
 11
 0.0
 1
 
 BUTTON
-976
-144
-1132
-177
+1293
+100
+1449
+133
 CAKE APOCALYPSE
 set length-1 0\nset length-2 0
 NIL
