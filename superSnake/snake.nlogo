@@ -281,11 +281,13 @@ end
 
 ;If you get hit by a bomb reduce your life
 to bomb-reduce
-  set length-1 length-1 - max [tail-1] of patches in-radius 3
-  set length-2 length-2 - max [tail-2] of patches in-radius 3
+  if any? patches with [pcolor = blue] in-radius 3
+  [set length-1 min [tail-1] of patches in-radius 3 with [pcolor = blue]]
+  if any? patches with [pcolor = red] in-radius 3
+  [set length-2 min [tail-2] of patches in-radius 3 with [pcolor = red]]
   if length-1 = 0 [ask snake-1 0 [ask patches with [pcolor = [color] of myself]
     [Reset-patches]die]]
-    if length-2 = 0 [ask snake-2 1 [ask patches with [pcolor = [color] of myself]
+  if length-2 = 0 [ask snake-2 1 [ask patches with [pcolor = [color] of myself]
     [Reset-patches]die]]
 end
 
