@@ -5,6 +5,12 @@ globals[
   length-2 ;length of snake 2
   bomb-2; cooldown for 2nd snake.
   bomb-1; cooldown for 1st snake.
+  wins ;how many wins each snake has
+  reset? ;resets wins
+  game-number ;how many setups counted
+  gamewinner ;how many wins per game
+  Restrict-1
+  Restrict-2
 ]
 
 patches-own [
@@ -23,7 +29,9 @@ breed [bombs bomb]
 ;;Main functions
 ;Setup sets up world
 to setup
-  ca
+  variable-setup
+  cp
+  ct
   ask patches [
     set length-1 0
     set length-2 0
@@ -36,6 +44,22 @@ to setup
   snake-setup
   food-spawn food
   reset-ticks
+end
+
+to variable-setup ;workaround for ca. Not all globals will be cleared, only some of them after each setup.
+  set inputxy-1 []
+  set inputxy-2 []
+  set length-1 0
+  set length-2 0
+  set bomb-2 0
+  set bomb-1 0
+  set gamewinner 0
+  ifelse reset? = 0 [
+    set wins [0 0]
+    set game-number 0
+    set reset? 1
+  ]
+  [set game-number game-number + 1]
 end
 
 ;Go runs the game (model)
@@ -268,6 +292,20 @@ to bomb-explode
   [set color color + (bomb-timer mod 3 - 1) * -4]
   ask patches with [bomb-timer != 0][set bomb-timer bomb-timer - 1]
 end
+
+;If you get hit by a bomb reduce your life
+to bomb-reduce
+  if any? patches with [pcolor = blue] in-radius 3
+  [set length-1 min [tail-1] of patches in-radius 3 with [pcolor = blue]]
+  if any? patches with [pcolor = red] in-radius 3
+  [set length-2 min [tail-2] of patches in-radius 3 with [pcolor = red]]
+  if length-1 = 0 [ask snake-1 0 [ask patches with [pcolor = [color] of myself]
+    [Reset-patches]die]]
+  if any? snakes-2 [
+    if length-2 = 0 [ask snake-2 1 [ask patches with [pcolor = [color] of myself]
+      [Reset-patches]die]]
+  ]
+end
 ;
 
 ;;Scores / Victory
@@ -279,27 +317,76 @@ to-report Player2 ;reports length of player 2
   report count patches with[pcolor = red]
 end
 
-;If you get hit by a bomb reduce your life
-to bomb-reduce
-  if any? patches with [pcolor = blue] in-radius 3
-  [set length-1 min [tail-1] of patches in-radius 3 with [pcolor = blue]]
-  if any? patches with [pcolor = red] in-radius 3
-  [set length-2 min [tail-2] of patches in-radius 3 with [pcolor = red]]
-  if length-1 = 0 [ask snake-1 0 [ask patches with [pcolor = [color] of myself]
-    [Reset-patches]die]]
-  if length-2 = 0 [ask snake-2 1 [ask patches with [pcolor = [color] of myself]
-    [Reset-patches]die]]
-end
-
 to victory ;victory crown for snake
   if Players > 1 [
-    if (not any? snakes-1)
-    [ask snakes-2 [set shape "snake-winner"]]
-    if (not any? snakes-2)
-    [ask snakes-1 [set shape "snake-winner"]]
+    if (not any? snakes-1) [
+      ask snakes-2 [set shape "snake-winner"]
+      if gamewinner = 0 [
+        set wins replace-item 1 wins ((item 1 wins) + 1)
+        set gamewinner 1
+        victory-animation 2
+      ]
+    ]
+    if (not any? snakes-2) [
+      ask snakes-1 [set shape "snake-winner"]
+      if gamewinner = 0 [
+        set wins replace-item 0 wins ((item 0 wins) + 1)
+        set gamewinner 1
+        victory-animation 1
+      ]
+    ]
   ]
 end
+
+to victory-animation [snake]
+  set inputxy-1 [0 0]
+  set inputxy-2 [0 0]
+  if user-yes-or-no? (word "Snake " snake " has won the game. Restart?" )[setup]
+end
+to-report P1-Score
+  report item 0 wins
+end
+
+to-report P2-Score
+  report item 1 wins
+end
+
+to reset-wins ;resets win counter
+  set wins [0 0]
+end
 ;
+;Gamemodes Like Mini-Games.
+;;;VERY IMPORTANT PLACE.
+
+to Mode
+  if Gamemode = "Normal"
+  [set restrict-1 [red blue yellow orange 44]
+    set restrict-2 restrict-1
+    food-spawn food
+  ]
+  if Gamemode = "No Competition"
+  [set restrict-1 [blue yellow orange 44]
+    set restrict-2 [red yellow orange 44]
+    food-spawn food
+  ]
+  if Gamemode = "Friendly World Dig"
+  [ask patches [Reset-patches]
+    ask n-of 35 patches with [abs (pxcor) > 4]
+    [set pcolor 4 + random 3]
+    set restrict-1 [4 5 6]
+    set restrict-2 [4 5 6]]
+end
+
+to Mode-go
+  if member? gamemode ["Normal" "No Competition"]
+    [food-spawn-go]
+  if Gamemode = "Friendly World Dig" and
+  count patches with [member? pcolor [4 5 6]] = 0
+  [set gamemode "normal"
+    set food 3
+    ask turtles [set shape "snake-winner"]
+  ]
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 397
@@ -522,7 +609,7 @@ Food
 Food
 1
 5
-5.0
+4.0
 1
 1
 NIL
@@ -636,7 +723,7 @@ speed
 speed
 1
 10
-6.0
+8.0
 1
 1
 NIL
@@ -645,12 +732,51 @@ HORIZONTAL
 CHOOSER
 982
 72
-1074
+1183
 117
-Modes
-Modes
-"Normal" "No Competition" "This Has Not yet been implemented"
-0
+Gamemode
+Gamemode
+"Normal" "No Competition" "Friendly World Dig"
+2
+
+BUTTON
+973
+15
+1093
+48
+Reset Wins
+reset-wins 
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+MONITOR
+974
+130
+1037
+175
+NIL
+P1-Score
+17
+1
+11
+
+MONITOR
+976
+186
+1039
+231
+NIL
+P2-Score
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -1070,7 +1196,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.0.1
+NetLogo 6.0.4
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
