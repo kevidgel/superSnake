@@ -90,12 +90,12 @@ end
 to snake-1move ;controls how player 1 moves
   ask snake-1 0 [
     move-to patch-at (item 0 inputxy-1)(item 1 inputxy-1) ;moves to patch depending on controller input
-    snake-die
     snake-eat 1
+    snake-die
     set pcolor blue set snake? 1 set id 1
     set heading xy-to-heading inputxy-1
   ]
-  ask patches with [tail-1 = length-1][
+  ask patches with [tail-1 >= length-1][
     Reset-patches
   ]
   ask patches with [pcolor = blue][set tail-1 tail-1 + 1]
@@ -104,12 +104,12 @@ end
 to snake-2move ;controls how player 2 moves
   ask snake-2 1 [
     move-to patch-at (item 0 inputxy-2)(item 1 inputxy-2)  ;moves to patch depending on controller input
-    snake-die
     snake-eat 2
+    snake-die
     set pcolor red set snake? 1 set id 2
     set heading xy-to-heading inputxy-2
   ]
-  ask patches with [tail-2 = length-2] [
+  ask patches with [tail-2 >= length-2] [
     Reset-patches
   ]
   ask patches with [pcolor = red][set tail-2 tail-2 + 1]
@@ -130,7 +130,7 @@ to snake-eat [long] ;how snakes eat
 end
 
 to snake-die
-  if member? pcolor [red blue yellow orange 44] ;if a snake hits another or itself, it dies.
+  if member? pcolor [red blue yellow orange 44];if a snake hits another or itself, it dies.
   [
     ask patches with [pcolor = [color] of myself] [
       Reset-patches
@@ -233,38 +233,40 @@ end
 
 to hideout_map
   ask patches with [(abs pxcor = max-pxcor and abs pycor > 4) or (abs pycor = max-pycor and abs pxcor > 4)
-  or (abs pxcor = 4 and abs pycor > 6) or (abs pycor = 4 and abs pxcor > 6)
-  or (8 < abs pxcor and abs pxcor < 12 and 8 < abs pycor and abs pycor < 12)]
+    or (abs pxcor = 4 and abs pycor > 10) or (abs pycor = 4 and abs pxcor > 10)
+    or (8 < abs pxcor and abs pxcor < 12 and 8 < abs pycor and abs pycor < 12)]
   [set pcolor 44]
 end
 
 ;;Modes: Bombs
 to bomb-summon [n] ;asks snakes to create bombs on their tails.
   if bomb-1 = 100 and n = 1[ask patches with [tail-1 = length-1]
-    [set tail-1 0 set pcolor white set bomb-timer 20
+    [reset-patches set pcolor white set bomb-timer 20
       sprout-bombs 1[set shape "bomb" set size 3 set color blue]] set bomb-1 0]
   if bomb-2 = 100 and n = 2[ask patches with [tail-2 = length-2]
-    [set tail-2 0 set pcolor white set bomb-timer 20
+    [reset-patches set pcolor white set bomb-timer 20
       sprout-bombs 1[set shape "bomb" set size 3 set color red]] set bomb-2 0]
 end
-to bomb-tick
+to bomb-tick;Counts down the time until you can place a bomb
   if bomb-1 != 100 [set bomb-1 bomb-1 + 4]
   if bomb-2 != 100 [set bomb-2 bomb-2 + 4]
   ask patches with [bomb-timer = 0 and member? pcolor [orange yellow]][
     Reset-patches
   ]
-  ask bombs-on patches with [bomb-timer < 10]
-  [set color color + (bomb-timer mod 3 - 1) * -4]
-  ask patches with [bomb-timer != 0][set bomb-timer bomb-timer - 1]
 end
 
+;Bomb Expoldes and blinks shortly before exploding.
 to bomb-explode
   ask patches with [bomb-timer = 0 and pcolor = white]
-  [ask bombs in-radius 2[die]
+  [ask bombs in-radius 3[die]
+    bomb-reduce
     ask patches in-radius 3[reset-patches ask cakes-here [die]
       set pcolor yellow set bomb-timer 10]
     ask patches in-radius 2[set pcolor orange set bomb-timer 9]
   ]
+  ask bombs-on patches with [bomb-timer < 10]
+  [set color color + (bomb-timer mod 3 - 1) * -4]
+  ask patches with [bomb-timer != 0][set bomb-timer bomb-timer - 1]
 end
 ;
 
@@ -275,6 +277,16 @@ end
 
 to-report Player2 ;reports length of player 2
   report count patches with[pcolor = red]
+end
+
+;If you get hit by a bomb reduce your life
+to bomb-reduce
+  set length-1 length-1 - max [tail-1] of patches in-radius 3
+  set length-2 length-2 - max [tail-2] of patches in-radius 3
+  if length-1 = 0 [ask snake-1 0 [ask patches with [pcolor = [color] of myself]
+    [Reset-patches]die]]
+    if length-2 = 0 [ask snake-2 1 [ask patches with [pcolor = [color] of myself]
+    [Reset-patches]die]]
 end
 
 to victory ;victory crown for snake
@@ -611,7 +623,7 @@ CHOOSER
 Maps
 Maps
 "Plain" "Border" "Battlefield" "Hideout"
-0
+3
 
 SLIDER
 65
@@ -627,6 +639,16 @@ speed
 1
 NIL
 HORIZONTAL
+
+CHOOSER
+982
+72
+1074
+117
+Modes
+Modes
+"Normal" "No Competition" "This Has Not yet been implemented"
+0
 
 @#$#@#$#@
 ## WHAT IS IT?
