@@ -737,7 +737,7 @@ CHOOSER
 Gamemode
 Gamemode
 "Normal" "No Competition" "Friendly World Dig"
-2
+0
 
 BUTTON
 973
