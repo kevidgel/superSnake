@@ -1,3 +1,9 @@
+ ;<Team name (only when submitting team work)>
+ ;<Firstname> <Lastname>
+ ;IntroCS1 pd<p>
+ ;
+ ;2018-01-18
+
 globals[
   inputxy-1 ;state of snake 1, as list. ex. [0 1] would be 0 horizontal and 1 vertical.
   inputxy-2 ;state of snake
@@ -815,6 +821,80 @@ NIL
 1
 
 @#$#@#$#@
+## WHAT IS IT?
+
+This model will be a modified version of the classic game Snake. 
+Snake is a game where a “snake” moves around the world and eats food pellets in order to grow. 
+In this model, there is an option to play multiplayer snake. There is also a mode called "bombs," in which snakes drop bombs and try to kill each other.
+
+## CONTROLS
+
+Use the slider “Players” to determine the number of players in the map. Use the slider “Speed” to determine the speed of the game (lower for slower speed, higher for faster speed).
+
+WASD to move snake 1. IJKL to move snake 2.
+E will cause snake 1 to drop bombs.
+O will cause snake 2 to drop bombs.
+Sliders for food and number of players.
+Setup creates the snakes and world.
+Go starts the game.
+
+The switch "Bombs?" will toggle the bombs mode on or off. 
+
+You can choose which map to play on using the chooser "Maps." 
+Bombs can destroy walls.
+
+Reset Score resets the scorekeeper to 0. 
+
+## HOW IT WORKS
+
+There will be three types of functions that we will use, the ones that control the movements and life cycles for the snake, the ones that control the environment (food pellets, etc.), and the ones that control the different game modes (bombs, # of snakes, etc.). Two main functions, called “setup” and “go” will set up the world of Snake and start the game. These two functions will also incorporate the other functions through modular design. 
+We have four functions for the life cycle of a snake. The first function will be called “snake-setup,” which will spawn snakes randomly throughout the world, and set their respective snake variables. The second function will be “snake-move,” which will control how the snakes move throughout the world. This function will most likely utilize modular design, for left, right, up, and down controls. The third function will be “snake-die,” as it will detect if a snake has touched itself or another snake and that kill that snake. The last function will be “snake-eat,” which will manage snake-eating.
+For the functions that will control and modify the environment of the snakes, there will be two. One is “world-setup” which will setup the world, clearing the world of food pellets and snakes, and resetting patch and turtle variables. The second function is “food-spawn,” which will spawn food for the snakes to eat. 
+Finally, we have functions for a game mode. These functions will make the snakes drop bombs, and kill other snakes, potentially including themselves.
+
+## THINGS TO NOTICE
+The patch that the snake "head" is on has a variable "length-x"
+That variable is set to dist-2, the distance of the entire snake.
+As the snake head moves to a different patch, the previous patch(es) decreases its length-x by 1.
+Eventually, if length-x = 0, it stop being part of the tail.
+Ex.
+ 00030000 ;3 is location of the head, numbers are the length-x of the patch.
+
+ snake moves right by 1
+ 00023000 ;1, 2 is the tail
+
+ snake moves right by 1
+ 00012300
+
+ snake moves right by 1
+ 00001230
+ ...
+
+The snake's head owns the highest length-x. Each time it eats, its length-x increases, creating a larger snake.
+
+## COMMENTS
+
+Overall, this project is using the classic game Snake and putting an interesting twist to it in order to make it more fun. 
+
+## NEW IN VERSION 3.0
++new victory popup
++controllable speed
++bombs now take off length of snake
++new score count
++new game modes
+
+Version 2.0
++added bombs mode
++added cake 
++added victory crown for winning snake
++snake is slowed down
++new background for easy viewing
++organized interface 
+
+## CREDITS AND REFERENCES
+
+Original Snake Game - 
+Netlogo dictionary - https://ccl.northwestern.edu/netlogo/docs/dictionary.html#listsgroup
 @#$#@#$#@
 default
 true

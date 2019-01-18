@@ -1,3 +1,9 @@
+ ;brad-2 - infinity
+ ;Steven Lee, David Hu, Lukas Chin
+ ;IntroCS1 pd04
+ ;Final Project -- superSnake
+ ;2018-01-18
+
 globals[
   inputxy-1 ;state of snake 1, as list. ex. [0 1] would be 0 horizontal and 1 vertical.
   inputxy-2 ;state of snake
