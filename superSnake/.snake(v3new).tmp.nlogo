@@ -274,7 +274,7 @@ to mount_map
   ask patches with [(abs pxcor > 3 and abs pxcor < 14 and abs pycor = 13) or (abs pycor > 3 and abs pycor < 14 and abs pxcor = 13)
     or (abs pxcor >= 16 and abs pxcor <= 21 and abs pycor >= 16 and abs pycor <= 21)
     or (abs pxcor >= 6 and abs pxcor <= 10 and pycor >= -2 and pycor <= 2)
-    or (abs pycor = max-pycor and abs pxcor <= 3)]
+]
   [set pcolor 44]
 end
 
