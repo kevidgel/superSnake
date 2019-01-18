@@ -360,8 +360,6 @@ to victory ;victory crown for snake
 end
 
 to victory-animation [snake]
-  set inputxy-1 [0 0]
-  set inputxy-2 [0 0]
   if user-yes-or-no? (word "Snake " snake " has won the game. Restart?" )[setup]
 end
 to-report P1-Score
@@ -733,7 +731,7 @@ CHOOSER
 Maps
 Maps
 "Plain" "Border" "Battlefield" "Hideout" "Space" "Mount" "Minecraft"
-5
+0
 
 SLIDER
 65
@@ -744,7 +742,7 @@ speed
 speed
 1
 10
-8.0
+6.0
 1
 1
 NIL
@@ -798,6 +796,23 @@ P2-Score
 17
 1
 11
+
+BUTTON
+2
+585
+126
+618
+Cake Apocalypse
+Set length-1 0\nset length-2 0
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
