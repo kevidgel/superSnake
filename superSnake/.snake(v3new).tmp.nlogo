@@ -1,7 +1,7 @@
- ;<Team name (only when submitting team work)>
- ;<Firstname> <Lastname>
- ;IntroCS1 pd<p>
- ;
+ ;brad-2 - infinity
+ ;Steven Lee, David Hu, Lukas Chin
+ ;IntroCS1 pd04
+ ;Final Project -- superSnake
  ;2018-01-18
 
 globals[
@@ -38,6 +38,7 @@ to setup
   variable-setup
   cp
   ct
+  Mode
   world-setup
   if Maps = "Border" [border_map]
   if Maps = "Battlefield" [battlefield_map]
@@ -46,7 +47,6 @@ to setup
   if Maps = "Mount" [mount_map]
   if Maps = "Minecraft" [minecraft_map]
   snake-setup
-  Mode
   reset-ticks
 end
 
@@ -240,8 +240,18 @@ to food-spawn [num] ;spawns the food depending on the food slider
   ]
 end
 
+to food-spawn-competitive [side] ;spawns food for competitive gamemode
+  if count patches with [food-value > 0 and (side * pxcor) > 0] < food
+  [
+  ask one-of patches with [pcolor = 56 or pcolor = 57 and (side * pxcor) > 0] [
+    set food-value (random 3) + 1
+    set pcolor scale-color brown food-value -3 6
+    sprout-cakes 1  [set shape "cake" set size 3]
+    ]]
+end
+
 to world-setup ;sets up the world
-  ask patches [Reset-patches] ;creates checkerboard pattern
+  ask patches with [pcolor = 0][Reset-patches] ;creates checkerboard pattern
 end
 
 to food-spawn-go ;spawns food as the game runs
@@ -270,7 +280,6 @@ end
 
 to space_map
   ask patches with [(pxcor = 0 and max-pycor >= abs pycor and abs pycor > 13) or (pycor = 0 and max-pxcor >= abs pxcor and abs pxcor > 13)
-    or (abs pxcor >= 7 and abs pxcor <= 8 and abs pycor >= 7 and abs pycor <= 8)
     or (abs pxcor >= 15 and abs pxcor <= 16 and abs pycor >= 15 and abs pycor <= 16)
     or (abs pxcor >= 23 and abs pxcor <= 24 and abs pycor >= 23 and abs pycor <= 24)]
   [set pcolor 44]
@@ -385,21 +394,31 @@ end
 
 to Mode
   if Gamemode = "Normal"
-  [set restrict-1 [red blue yellow orange 44]
+  [resize-world -24 24 -24 24
+    set restrict-1 [red blue yellow orange 44]
     set restrict-2 restrict-1
-    food-spawn food
   ]
   if Gamemode = "No Competition"
-  [set restrict-1 [blue yellow orange 44]
+  [resize-world -24 24 -24 24
+    set restrict-1 [blue yellow orange 44]
     set restrict-2 [red yellow orange 44]
-    food-spawn food
   ]
   if Gamemode = "Friendly World Dig"
-  [ask patches [Reset-patches]
+  [resize-world -24 24 -24 24
+    ask patches [Reset-patches]
     ask n-of 35 patches with [abs (pxcor) > 4]
     [set pcolor 4 + random 3]
     set restrict-1 [4 5 6]
     set restrict-2 [4 5 6]]
+  if Gamemode = "Competitive"
+  [set restrict-1 [red blue yellow orange 44 gray]
+    set maps "Plain"
+    set bombs? false
+    set restrict-2 restrict-1
+    resize-world -49 49 -24 24
+    ask patches with [member? pxcor [0 -49 49]]
+    [set pcolor gray]
+  ]
 end
 
 to Mode-go
@@ -411,13 +430,17 @@ to Mode-go
     set food 3
     ask turtles [set shape "snake-winner"]
   ]
+  if Gamemode = "Competitive"
+  [food-spawn-competitive -1
+    food-spawn-competitive 1
+]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-397
-10
-944
-558
+423
+17
+1520
+565
 -1
 -1
 11.0
@@ -430,8 +453,8 @@ GRAPHICS-WINDOW
 1
 1
 1
--24
-24
+-49
+49
 -24
 24
 1
@@ -703,7 +726,7 @@ SWITCH
 120
 Bombs?
 Bombs?
-0
+1
 1
 -1000
 
@@ -748,27 +771,27 @@ speed
 speed
 1
 10
-6.0
+8.0
 1
 1
 NIL
 HORIZONTAL
 
 CHOOSER
-982
-72
-1183
-117
+171
+566
+372
+611
 Gamemode
 Gamemode
-"Normal" "No Competition" "Friendly World Dig"
-0
+"Normal" "No Competition" "Friendly World Dig" "Competitive"
+3
 
 BUTTON
-973
-15
-1093
-48
+162
+509
+282
+542
 Reset Wins
 reset-wins 
 NIL
@@ -782,10 +805,10 @@ NIL
 1
 
 MONITOR
-974
-130
-1037
-175
+163
+624
+226
+669
 NIL
 P1-Score
 17
@@ -793,10 +816,10 @@ P1-Score
 11
 
 MONITOR
-976
-186
-1039
-231
+165
+680
+228
+725
 NIL
 P2-Score
 17
