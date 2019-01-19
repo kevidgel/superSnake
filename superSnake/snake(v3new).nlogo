@@ -366,25 +366,40 @@ to-report Player2 ;reports length of player 2
   report count patches with[pcolor = red]
 end
 
-to victory ;victory crown for snake
-  if Players > 1 [
-    if (not any? snakes-1) [
-      ask snakes-2 [set shape "snake-winner"]
+to snake1-win
+  ask snakes-2 [set shape "snake-winner"]
       if gamewinner = 0 [
         set wins replace-item 1 wins ((item 1 wins) + 1)
         set gamewinner 1
-        victory-animation 2
-      ]
-    ]
-    if (not any? snakes-2) [
-      ask snakes-1 [set shape "snake-winner"]
+    victory-animation 2]
+end
+
+to snake2-win
+  ask snakes-1 [set shape "snake-winner"]
       if gamewinner = 0 [
         set wins replace-item 0 wins ((item 0 wins) + 1)
         set gamewinner 1
-        victory-animation 1
+    victory-animation 1]
+end
+
+to victory ;victory crown for snake
+  if Players > 1 [
+    if (not any? snakes-1) [
+      snake1-win
       ]
-    ]
+    if (not any? snakes-2) [
+      snake2-win
+      ]
   ]
+end
+
+to comp-victory ;Competitive timer-victory
+  if length-1 = length-2
+  [ifelse user-yes-or-no? (word  "It's a tie. Restart?" )
+    [setup][set comp-timer 900]]
+  ifelse length-1 > length-2
+  [snake1-win]
+  [snake2-win]
 end
 
 to victory-animation [snake]
@@ -401,6 +416,8 @@ end
 to reset-wins ;resets win counter
   set wins [0 0]
 end
+
+
 ;
 ;Gamemodes Like Mini-Games.
 ;;;VERY IMPORTANT PLACE.
@@ -437,6 +454,7 @@ to Mode
     ask patches with
     [member? pxcor [0 -49 49] or member? pycor [-24 24]]
     [set pcolor 88]
+    set comp-timer 1800
   ]
 
   SPaWn-selector
@@ -467,7 +485,10 @@ to Mode-go
   if Mode-selector = "Competitive"
   [food-spawn-competitive -1
     food-spawn-competitive 1
-    Victory]
+    set comp-timer comp-timer - 1
+    if comp-timer = 0 [comp-victory]
+    Victory
+  ]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -866,6 +887,16 @@ Food
 Food
 1 2 3 4 5
 2
+
+TEXTBOX
+42
+229
+192
+247
+NIL
+11
+0.0
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
