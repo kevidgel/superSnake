@@ -85,7 +85,7 @@ end
 ;;Snake life-cycle
 ;sets up the snakes
 to snake-setup
-  ask patches at-points[ [-1 0] [1 0] ] [set snake? 1] ;player 1
+  ask patch -1 0 [set snake? 1] ;player 1
   ask one-of patches with [snake? = 1] [
     set pcolor blue
     set length-1 3
@@ -95,10 +95,12 @@ to snake-setup
       set shape "snake-head"
       set color blue
       set size 2.5
+      set heading 0
     ]
     set inputxy-1 [0 1]
     set tail-1 1
   ]
+  ask patch 1 0 [set snake? 1]
   if Players != 1 [ ;checks if there is more than 1 player
     ask one-of patches with [snake? = 1 and pcolor != blue] [ ;player 2
       set pcolor red
@@ -109,6 +111,7 @@ to snake-setup
         set shape "snake-head"
         set color red
         set size 2.5
+        set heading 1
       ]
       set inputxy-2 [0 -1]
       set tail-2 1
@@ -513,10 +516,10 @@ NIL
 1
 
 BUTTON
-62
-193
-133
-226
+36
+335
+92
+369
 Up 1
 north 1
 NIL
@@ -530,10 +533,10 @@ NIL
 1
 
 BUTTON
-54
-342
-132
-375
+279
+338
+335
+372
 Up 2
 north 2\n\n
 NIL
@@ -547,10 +550,10 @@ NIL
 1
 
 BUTTON
-54
-273
-149
-306
+36
+417
+92
+451
 Down 1
 south 1\n
 NIL
@@ -564,10 +567,10 @@ NIL
 1
 
 BUTTON
-56
-433
-151
-466
+277
+413
+333
+447
 Down 2
 south 2\n
 NIL
@@ -581,10 +584,10 @@ NIL
 1
 
 BUTTON
-103
-233
-193
-266
+70
+376
+126
+410
 Right 1
 east 1
 NIL
@@ -598,10 +601,10 @@ NIL
 1
 
 BUTTON
-12
-234
-90
-267
+3
+375
+59
+409
 Left 1
 west 1
 NIL
@@ -615,10 +618,10 @@ NIL
 1
 
 BUTTON
-101
-387
-191
-420
+309
+375
+365
+409
 Right 2
 east 2\n
 NIL
@@ -632,10 +635,10 @@ NIL
 1
 
 BUTTON
-13
-387
-91
-420
+247
+375
+303
+409
 Left 2
 west 2
 NIL
@@ -664,10 +667,10 @@ NIL
 HORIZONTAL
 
 BUTTON
-238
-234
-333
-267
+100
+335
+156
+369
 Bomb 1
 bomb-summon 1\n
 NIL
@@ -681,10 +684,10 @@ NIL
 1
 
 MONITOR
-233
-187
-318
-232
+87
+284
+153
+330
 Cooldown
 100 - bomb-1
 17
@@ -692,10 +695,10 @@ Cooldown
 11
 
 MONITOR
-233
-343
-318
-388
+345
+289
+411
+335
 Cooldown
 100 - Bomb-2
 17
@@ -703,10 +706,10 @@ Cooldown
 11
 
 BUTTON
-242
-391
-337
-424
+343
+338
+402
+372
 Bomb 2
 bomb-summon 2
 NIL
@@ -731,10 +734,10 @@ Bombs?
 -1000
 
 MONITOR
-227
-272
-284
-317
+18
+282
+75
+327
 NIL
 Player1
 17
@@ -742,10 +745,10 @@ Player1
 11
 
 MONITOR
-228
-426
-285
-471
+276
+290
+333
+335
 NIL
 Player2
 17
@@ -771,27 +774,27 @@ speed
 speed
 1
 10
-8.0
+10.0
 1
 1
 NIL
 HORIZONTAL
 
 CHOOSER
-171
-566
-372
-611
+204
+134
+405
+179
 Gamemode
 Gamemode
 "Normal" "No Competition" "Friendly World Dig" "Competitive"
 3
 
 BUTTON
-162
-509
-282
-542
+172
+240
+258
+274
 Reset Wins
 reset-wins 
 NIL
@@ -805,10 +808,10 @@ NIL
 1
 
 MONITOR
-163
-624
-226
-669
+88
+233
+151
+278
 NIL
 P1-Score
 17
@@ -816,10 +819,10 @@ P1-Score
 11
 
 MONITOR
-165
-680
-228
-725
+276
+237
+339
+282
 NIL
 P2-Score
 17
@@ -827,10 +830,10 @@ P2-Score
 11
 
 BUTTON
-2
-585
-126
-618
+9
+556
+133
+589
 Cake Apocalypse
 Set length-1 0\nset length-2 0
 NIL
