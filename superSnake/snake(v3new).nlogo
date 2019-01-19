@@ -1,8 +1,8 @@
- ;brad-2 - infinity
- ;Steven Lee, David Hu, Lukas Chin
- ;IntroCS1 pd04
- ;Final Project -- superSnake
- ;2018-01-18
+;brad-2 - infinity
+;Steven Lee, David Hu, Lukas Chin
+;IntroCS1 pd04
+;Final Project -- superSnake
+;2018-01-18
 
 globals[
   inputxy-1 ;state of snake 1, as list. ex. [0 1] would be 0 horizontal and 1 vertical.
@@ -15,8 +15,10 @@ globals[
   reset? ;resets wins
   game-number ;how many setups counted
   gamewinner ;how many wins per game
-  Restrict-1
-  Restrict-2
+  Spawn-1;Where first snake spawns
+  Spawn-2;Where second snake spawns.
+  Restrict-1;What patches kills snake1
+  Restrict-2;same but for snake2
 ]
 
 patches-own [
@@ -40,12 +42,7 @@ to setup
   ct
   Mode
   world-setup
-  if Maps = "Border" [border_map]
-  if Maps = "Battlefield" [battlefield_map]
-  if Maps = "Hideout" [hideout_map]
-  if Maps = "Space" [space_map]
-  if Maps = "Mount" [mount_map]
-  if Maps = "Minecraft" [minecraft_map]
+  Map-selector
   snake-setup
   reset-ticks
 end
@@ -85,7 +82,7 @@ end
 ;;Snake life-cycle
 ;sets up the snakes
 to snake-setup
-  ask patch -1 0 [set snake? 1] ;player 1
+  ask Spawn-1 [set snake? 1] ;player 1
   ask one-of patches with [snake? = 1] [
     set pcolor blue
     set length-1 3
@@ -100,7 +97,7 @@ to snake-setup
     set inputxy-1 [0 1]
     set tail-1 1
   ]
-  ask patch 1 0 [set snake? 1]
+  ask Spawn-2 [set snake? 1]
   if Players != 1 [ ;checks if there is more than 1 player
     ask one-of patches with [snake? = 1 and pcolor != blue] [ ;player 2
       set pcolor red
@@ -246,11 +243,11 @@ end
 to food-spawn-competitive [side] ;spawns food for competitive gamemode
   if count patches with [food-value > 0 and (side * pxcor) > 0] < food
   [
-  ask one-of patches with [pcolor = 56 or pcolor = 57 and (side * pxcor) > 0] [
-    set food-value (random 3) + 1
-    set pcolor scale-color brown food-value -3 6
-    sprout-cakes 1  [set shape "cake" set size 3]
-    ]]
+    ask one-of patches with [pcolor = 56 or pcolor = 57 and (side * pxcor) > 0] [
+      set food-value (random 3) + 1
+      set pcolor scale-color brown food-value -3 6
+      sprout-cakes 1  [set shape "cake" set size 3]
+  ]]
 end
 
 to world-setup ;sets up the world
@@ -263,6 +260,14 @@ to food-spawn-go ;spawns food as the game runs
 end
 
 ;;Maps- using chooser "Maps," creates different maps with different obstacles
+to map-selector
+  if Maps = "Border" [border_map]
+  if Maps = "Battlefield" [battlefield_map]
+  if Maps = "Hideout" [hideout_map]
+  if Maps = "Space" [space_map]
+  if Maps = "Mount" [mount_map]
+  if Maps = "Minecraft" [minecraft_map]
+end
 to border_map
   ask patches with [pxcor = max-pxcor or pxcor = min-pxcor or pycor = min-pycor or pycor = max-pycor]
   [set pcolor 44]
@@ -322,7 +327,7 @@ end
 to bomb-explode
   ask patches with [bomb-timer = 0 and pcolor = white]
   [ask bombs in-radius 3[die]
-    bomb-reduce
+    if gamemode = "normal" [bomb-reduce]
     ask patches in-radius 3[reset-patches ask cakes-here [die]
       set pcolor yellow set bomb-timer 10]
     ask patches in-radius 2[set pcolor orange set bomb-timer 9]
@@ -396,24 +401,29 @@ end
 ;;;VERY IMPORTANT PLACE.
 
 to Mode
-  if Gamemode = "Normal"
+
+  if Gamemode = "Normal";Typical setup. Everything basicallly kills you
   [resize-world -24 24 -24 24
     set restrict-1 [red blue yellow orange 44]
     set restrict-2 restrict-1
   ]
-  if Gamemode = "No Competition"
+
+  if Gamemode = "No Competition";Typical setup. opponent can't kill you
   [resize-world -24 24 -24 24
     set restrict-1 [blue yellow orange 44]
     set restrict-2 [red yellow orange 44]
   ]
-  if Gamemode = "Friendly World Dig"
+
+  if Gamemode = "Friendly World Dig";Causal Minecraft mining
   [resize-world -24 24 -24 24
+    set bombs? true
     ask patches [Reset-patches]
     ask n-of 35 patches with [abs (pxcor) > 4]
     [set pcolor 4 + random 3]
     set restrict-1 [4 5 6]
     set restrict-2 [4 5 6]]
-  if Gamemode = "Competitive"
+
+  if Gamemode = "Competitive"; Competition style snake. No bombs
   [set restrict-1 [red blue yellow orange 44 gray]
     set maps "Plain"
     set bombs? false
@@ -422,27 +432,39 @@ to Mode
     ask patches with [member? pxcor [0 -49 49]]
     [set pcolor gray]
   ]
+
+  SPAWN-selector
 end
 
+to spawn-selector
+  ifelse Gamemode = "Competitive"
+  [
+    set Spawn-1 (patch -24 0)
+    set Spawn-2 (patch 24 0)
+  ][
+    set Spawn-1 (patch -1 0)
+    set Spawn-2 (patch 1 0)
+  ]
+end
 to Mode-go
   if member? gamemode ["Normal" "No Competition"]
     [food-spawn-go Victory]
   if Gamemode = "Friendly World Dig" and
   count patches with [member? pcolor [4 5 6]] = 0
-  [set gamemode "normal"
+  [set gamemode "Normal"
     set food 3
-    ask turtles [set shape "snake-winner"]
+    ask turtles with [who <= 1][set shape "snake-winner"]
   ]
   if Gamemode = "Competitive"
   [food-spawn-competitive -1
     food-spawn-competitive 1
-  Victory]
+    Victory]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
 423
 17
-1520
+970
 565
 -1
 -1
@@ -456,8 +478,8 @@ GRAPHICS-WINDOW
 1
 1
 1
--49
-49
+-24
+24
 -24
 24
 1
@@ -660,7 +682,7 @@ Food
 Food
 1
 5
-4.0
+3.0
 1
 1
 NIL
@@ -687,7 +709,7 @@ MONITOR
 87
 284
 153
-330
+329
 Cooldown
 100 - bomb-1
 17
@@ -698,7 +720,7 @@ MONITOR
 345
 289
 411
-335
+334
 Cooldown
 100 - Bomb-2
 17
@@ -729,7 +751,7 @@ SWITCH
 120
 Bombs?
 Bombs?
-1
+0
 1
 -1000
 
@@ -774,7 +796,7 @@ speed
 speed
 1
 10
-10.0
+7.0
 1
 1
 NIL
@@ -788,7 +810,7 @@ CHOOSER
 Gamemode
 Gamemode
 "Normal" "No Competition" "Friendly World Dig" "Competitive"
-3
+0
 
 BUTTON
 172
