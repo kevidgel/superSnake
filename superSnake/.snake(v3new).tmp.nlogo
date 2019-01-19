@@ -19,7 +19,7 @@ globals[
   Spawn-2;Where second snake spawns.
   Restrict-1;What patches kills snake1
   Restrict-2;same but for snake2
-  Mode-selector;Allows you to change Gamemode in-game without breaking game.
+  Mode-selector;
 ]
 
 patches-own [
@@ -454,7 +454,7 @@ to Mode-go
     [food-spawn-go Victory]
   if Mode-selector = "Friendly World Dig" and
   count patches with [member? pcolor [4 5 6]] = 0
-  [set Mode-selector "Normal"
+  [set  "Normal"
     ask turtles with [who <= 1][set shape "snake-winner"]
   ]
   if Mode-selector = "Competitive"
@@ -466,7 +466,7 @@ end
 GRAPHICS-WINDOW
 423
 17
-1520
+970
 565
 -1
 -1
@@ -480,8 +480,8 @@ GRAPHICS-WINDOW
 1
 1
 1
--49
-49
+-24
+24
 -24
 24
 1
@@ -723,7 +723,7 @@ SWITCH
 103
 Bombs?
 Bombs?
-1
+0
 1
 -1000
 
@@ -782,7 +782,7 @@ CHOOSER
 Gamemode
 Gamemode
 "Normal" "No Competition" "Friendly World Dig" "Competitive"
-3
+0
 
 BUTTON
 171
