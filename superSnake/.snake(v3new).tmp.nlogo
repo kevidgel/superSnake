@@ -19,7 +19,8 @@ globals[
   Spawn-2;Where second snake spawns.
   Restrict-1;What patches kills snake1
   Restrict-2;same but for snake2
-  Mode-selector;
+  Mode-selector;Allows you to change Gamemode in-game without breaking game.
+  Comp-timer; timer for competitive
 ]
 
 patches-own [
@@ -39,8 +40,6 @@ breed [bombs bomb]
 ;Setup sets up world
 to setup
   variable-setup
-  cp
-  ct
   Mode
   world-setup
   Map-selector
@@ -58,12 +57,16 @@ to variable-setup ;workaround for ca. Not all globals will be cleared, only some
   set restrict-1 []
   set restrict-1 []
   set gamewinner 0
+  set mode-selector "normal"
+  set Comp-timer 0
   ifelse reset? = 0 [
     set wins [0 0]
     set game-number 0
     set reset? 1
   ]
   [set game-number game-number + 1]
+  cp
+  ct
 end
 
 ;Go runs the game (model)
@@ -230,6 +233,7 @@ to-report xy-to-heading [xy] ;converts directional coordinates to heading
   if xy = [-1 0]
   [report 270]
 end
+
 ;
 
 ;;Environment
@@ -271,27 +275,27 @@ to map-selector
 end
 to border_map
   ask patches with [pxcor = max-pxcor or pxcor = min-pxcor or pycor = min-pycor or pycor = max-pycor]
-  [set pcolor 44]
+  [set pcolor 68]
 end
 
 to battlefield_map
   ask patches with [pxcor = max-pxcor or pxcor = min-pxcor or (abs pycor < 13 and abs pxcor = 11) or (abs pycor > 4 and abs pxcor = 8)
     or (abs pycor  = max-pycor and abs pxcor > 8)]
-  [set pcolor 44]
+  [set pcolor 68]
 end
 
 to hideout_map
   ask patches with [(abs pxcor = max-pxcor and abs pycor > 4) or (abs pycor = max-pycor and abs pxcor > 4)
     or (abs pxcor = 4 and abs pycor > 10) or (abs pycor = 4 and abs pxcor > 10)
     or (8 < abs pxcor and abs pxcor < 12 and 8 < abs pycor and abs pycor < 12)]
-  [set pcolor 44]
+  [set pcolor 68]
 end
 
 to space_map
   ask patches with [(pxcor = 0 and max-pycor >= abs pycor and abs pycor > 13) or (pycor = 0 and max-pxcor >= abs pxcor and abs pxcor > 13)
     or (abs pxcor >= 15 and abs pxcor <= 16 and abs pycor >= 15 and abs pycor <= 16)
     or (abs pxcor >= 23 and abs pxcor <= 24 and abs pycor >= 23 and abs pycor <= 24)]
-  [set pcolor 44]
+  [set pcolor 68]
 end
 
 to mount_map
@@ -299,12 +303,12 @@ to mount_map
     or (abs pxcor >= 16 and abs pxcor <= 21 and abs pycor >= 16 and abs pycor <= 21)
     or (abs pxcor >= 6 and abs pxcor <= 10 and pycor >= -2 and pycor <= 2)
     or (abs pycor = max-pycor and abs pxcor <= 3)]
-  [set pcolor 44]
+  [set pcolor 68]
 end
 
 to minecraft_map
-  ask patches with [abs pxcor >= 3 and abs pycor >= 3]
-  [set pcolor 44]
+  ask patches with [abs pxcor >= 3 and abs pycor >= 3 and pxcor mod 2 + pycor mod 2 = 0]
+  [set pcolor ]
 end
 
 ;;Modes: Bombs
@@ -405,14 +409,14 @@ to Mode
 
   if Gamemode = "Normal";Typical setup. Everything basicallly kills you
   [resize-world -24 24 -24 24
-    set restrict-1 [red blue yellow orange 44]
+    set restrict-1 [red blue yellow orange 68]
     set restrict-2 restrict-1
   ]
 
   if Gamemode = "No Competition";Typical setup. opponent can't kill you
   [resize-world -24 24 -24 24
-    set restrict-1 [blue yellow orange 44]
-    set restrict-2 [red yellow orange 44]
+    set restrict-1 [blue yellow orange 68]
+    set restrict-2 [red yellow orange 68]
   ]
 
   if Gamemode = "Friendly World Dig";Causal Minecraft mining
@@ -425,16 +429,17 @@ to Mode
     set restrict-2 [4 5 6]]
 
   if Gamemode = "Competitive"; Competition style snake. No bombs
-  [set restrict-1 [red blue yellow orange 44 gray]
+  [set restrict-1 [red blue yellow orange 68]
     set maps "Plain"
     set bombs? false
     set restrict-2 restrict-1
     resize-world -49 49 -24 24
-    ask patches with [member? pxcor [0 -49 49]]
-    [set pcolor gray]
+    ask patches with
+    [member? pxcor [0 -49 49] or member? pycor [-24 24]]
+    [set pcolor 68]
   ]
 
-  SPAWN-selector
+  SPaWn-selector
   set Mode-selector Gamemode
 end
 
@@ -452,11 +457,13 @@ end
 to Mode-go
   if member? Mode-selector ["Normal" "No Competition"]
     [food-spawn-go Victory]
-  if Mode-selector = "Friendly World Dig" and
-  count patches with [member? pcolor [4 5 6]] = 0
-  [set  "Normal"
+
+  if Mode-selector = "Friendly World Dig"
+  and count patches with [member? pcolor [4 5 6]] = 0
+  [set Mode-selector "Normal"
     ask turtles with [who <= 1][set shape "snake-winner"]
   ]
+
   if Mode-selector = "Competitive"
   [food-spawn-competitive -1
     food-spawn-competitive 1
@@ -466,11 +473,11 @@ end
 GRAPHICS-WINDOW
 423
 17
-970
-565
+947
+542
 -1
 -1
-11.0
+9.485
 1
 10
 1
@@ -723,7 +730,7 @@ SWITCH
 103
 Bombs?
 Bombs?
-0
+1
 1
 -1000
 
@@ -757,7 +764,7 @@ CHOOSER
 Maps
 Maps
 "Plain" "Border" "Battlefield" "Hideout" "Space" "Mount" "Minecraft"
-0
+6
 
 SLIDER
 276
