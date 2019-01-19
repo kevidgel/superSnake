@@ -98,7 +98,6 @@ to snake-setup
       set size 2.5
       set heading 0
     ]
-    set inputxy-1 [0 1]
     set tail-1 1
   ]
   ask Spawn-2 [set snake? 1]
@@ -114,10 +113,11 @@ to snake-setup
         set size 2.5
         set heading 1
       ]
-      set inputxy-2 [0 -1]
       set tail-2 1
     ]
   ]
+  set inputxy-1 [0 1]
+  set inputxy-2 [0 -1]
 end
 
 to snake-1move ;controls how player 1 moves
@@ -311,7 +311,7 @@ to minecraft_map
   [set pcolor 88]
 end
 
-;;Modes: Bombs
+;;All Bomb Functions
 to bomb-summon [n] ;asks snakes to create bombs on their tails.
   if bomb-1 = 100 and n = 1[ask patches with [tail-1 = length-1]
     [reset-patches set pcolor white set bomb-timer 20
@@ -366,40 +366,43 @@ to-report Player2 ;reports length of player 2
   report count patches with[pcolor = red]
 end
 
-to snake1-win
+to snake2-win ;snake2's victory annimation
   ask snakes-2 [set shape "snake-winner"]
-      if gamewinner = 0 [
-        set wins replace-item 1 wins ((item 1 wins) + 1)
-        set gamewinner 1
+  if gamewinner = 0 [
+    set wins replace-item 1 wins ((item 1 wins) + 1)
+    set gamewinner 1
     victory-animation 2]
 end
 
-to snake2-win
+to snake1-win ;snake1's victory animation
   ask snakes-1 [set shape "snake-winner"]
-      if gamewinner = 0 [
-        set wins replace-item 0 wins ((item 0 wins) + 1)
-        set gamewinner 1
+  if gamewinner = 0 [
+    set wins replace-item 0 wins ((item 0 wins) + 1)
+    set gamewinner 1
     victory-animation 1]
 end
 
 to victory ;victory crown for snake
-  if Players > 1 [
+  if Players > 1[
+    if (count snakes-1 + count snakes-2 = 0)
+      [User-message (word "You both died")
+        setup]
     if (not any? snakes-1) [
-      snake1-win
-      ]
-    if (not any? snakes-2) [
       snake2-win
-      ]
+    ]
+    if (not any? snakes-2) [
+      snake1-win
+    ]
   ]
 end
 
 to comp-victory ;Competitive timer-victory
-  if length-1 = length-2
+  ifelse length-1 = length-2
   [ifelse user-yes-or-no? (word  "It's a tie. Restart?" )
     [setup][set comp-timer 900]]
-  ifelse length-1 > length-2
-  [snake1-win]
-  [snake2-win]
+  [ifelse length-1 > length-2
+    [snake1-win]
+    [snake2-win]]
 end
 
 to victory-animation [snake]
@@ -440,8 +443,9 @@ to Mode
   [resize-world -24 24 -24 24
     set bombs? true
     ask patches [Reset-patches]
-    ask n-of 35 patches with [abs (pxcor) > 4]
+    ask n-of 300 patches with [abs (pxcor) > 4]
     [set pcolor 4 + random 3]
+    set maps "Plain"
     set restrict-1 [4 5 6]
     set restrict-2 [4 5 6]]
 
@@ -454,7 +458,7 @@ to Mode
     ask patches with
     [member? pxcor [0 -49 49] or member? pycor [-24 24]]
     [set pcolor 88]
-    set comp-timer 1800
+    set comp-timer 900
   ]
 
   SPaWn-selector
@@ -494,8 +498,8 @@ end
 GRAPHICS-WINDOW
 423
 17
-947
-542
+1471
+541
 -1
 -1
 9.485
@@ -508,8 +512,8 @@ GRAPHICS-WINDOW
 1
 1
 1
--24
-24
+-49
+49
 -24
 24
 1
@@ -722,7 +726,7 @@ MONITOR
 404
 362
 Cooldown
-100 - Bomb-2
+100 - bomb-2
 17
 1
 11
@@ -751,7 +755,7 @@ SWITCH
 103
 Bombs?
 Bombs?
-0
+1
 1
 -1000
 
@@ -785,7 +789,7 @@ CHOOSER
 Maps
 Maps
 "Plain" "Border" "Battlefield" "Hideout" "Space" "Mount" "Minecraft"
-6
+0
 
 SLIDER
 276
@@ -796,7 +800,7 @@ speed
 speed
 0
 10
-6.0
+10.0
 1
 1
 NIL
@@ -810,7 +814,7 @@ CHOOSER
 Gamemode
 Gamemode
 "Normal" "No Competition" "Friendly World Dig" "Competitive"
-0
+3
 
 BUTTON
 171
@@ -876,7 +880,7 @@ CHOOSER
 Players
 Players
 1 2
-0
+1
 
 CHOOSER
 211
@@ -897,6 +901,17 @@ NIL
 11
 0.0
 1
+
+MONITOR
+153
+141
+262
+182
+Competitive Timer
+ceiling (Comp-timer / 15)
+17
+1
+10
 
 @#$#@#$#@
 ## WHAT IS IT?
