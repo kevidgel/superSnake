@@ -482,14 +482,14 @@ end
 
 to normal-game
   resize-world -24 24 -24 24
-  set restrict-1 [red blue yellow orange 88 18]
+  set restrict-1 [red blue yellow orange 88 18 1]
   set restrict-2 restrict-1
   set bombs? true
 end
 
 to nocompetition-game
   resize-world -24 24 -24 24
-  set restrict-1 [blue yellow orange 88 18]
+  set restrict-1 [blue yellow orange 88 18 1]
   set restrict-2 [red yellow orange 88 18]
   set bombs? true
 end
