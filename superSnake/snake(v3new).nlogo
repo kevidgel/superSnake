@@ -39,18 +39,20 @@ breed [snakes-2 snake-2]
 breed [cakes cake]
 breed [bombs bomb]
 
+;;Startup Functions
 to startup;this should ask you to select mode and names
   set name1 user-input "Name of Snake 1"
   set name2 user-input "Name of Snake 2"
   switch-mode
 end
 
-to switch-mode;
+to switch-mode;Prompts you to select gamemode and player number.
   set gamemode user-one-of "Which Gamemode?"
   ["Normal" "No Competition" "Friendly World Dig" "Competitive"]
   set players user-one-of "How many Players?"
   [1 2]
 end
+;
 ;;Main functions
 ;Setup sets up world
 to setup
@@ -419,6 +421,15 @@ to victory-animation [snake]
   if user-yes-or-no? (word "Snake " snake " has won the game. Restart?" )
   [if ask-mode? [switch-mode] setup]
 end
+
+to single-player-message
+  if players = 1 and
+  not any? snakes-1
+  [if user-yes-or-no? (word  "Restart?" )
+    [if ask-mode? [switch-mode]
+      setup]]
+end
+
 to-report P1-Score
   report item 0 wins
 end
@@ -508,14 +519,6 @@ to Mode-go
     if comp-timer = 0 [comp-victory]
     Victory
   ]
-end
-
-to single-player-message
-  if players = 1 and
-  not any? snakes-1
-  [if user-yes-or-no? (word  "Restart?" )
-    [if ask-mode? [switch-mode]
-      setup]]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -892,7 +895,7 @@ CHOOSER
 Players
 Players
 1 2
-0
+1
 
 CHOOSER
 211
@@ -961,10 +964,10 @@ Sliders for food and number of players.
 Setup creates the snakes and world.
 Go starts the game.
 
-The switch "Bombs?" will toggle the bombs mode on or off. 
+### Configurations
+The switch "Ask-Mode?" will toggle whether you wish to be prompted to switch your gamemode everytime. 
 
 You can choose which map to play on using the chooser "Maps." 
-Bombs can destroy walls.
 
 Reset Score resets the scorekeeper to 0. 
 
@@ -974,8 +977,9 @@ There will be three types of functions that we will use, the ones that control t
 We have four functions for the life cycle of a snake. The first function will be called “snake-setup,” which will spawn snakes randomly throughout the world, and set their respective snake variables. The second function will be “snake-move,” which will control how the snakes move throughout the world. This function will most likely utilize modular design, for left, right, up, and down controls. The third function will be “snake-die,” as it will detect if a snake has touched itself or another snake and that kill that snake. The last function will be “snake-eat,” which will manage snake-eating.
 For the functions that will control and modify the environment of the snakes, there will be two. One is “world-setup” which will setup the world, clearing the world of food pellets and snakes, and resetting patch and turtle variables. The second function is “food-spawn,” which will spawn food for the snakes to eat. 
 Finally, we have functions for a game mode. These functions will make the snakes drop bombs, and kill other snakes, potentially including themselves.
+Gamemodes are made by modifying the go and setup functions in such a way that they are tailored to each type of gamemode.
 
-## THINGS TO NOTICE
+## THINGS TO NOTICE (I think you should remove this since its not true anymore. It has the lowest tail-value and if tail-value exceeds distance it doesn't exist.)
 The patch that the snake "head" is on has a variable "length-x"
 That variable is set to dist-2, the distance of the entire snake.
 As the snake head moves to a different patch, the previous patch(es) decreases its length-x by 1.
@@ -998,6 +1002,14 @@ The snake's head owns the highest length-x. Each time it eats, its length-x incr
 ## COMMENTS
 
 Overall, this project is using the classic game Snake and putting an interesting twist to it in order to make it more fun. 
+
+## NEW IN VERSION 4.0
++New startup popup
++Choose the names of the snakes
++Victory messages improved
++Removed bombs? switch(if you don't like bombs don't press "E")
++Competitive Gamemode
++Changed color of the Walls.
 
 ## NEW IN VERSION 3.0
 +new victory popup
