@@ -683,8 +683,8 @@ end
 GRAPHICS-WINDOW
 446
 51
-1840
-746
+1841
+749
 -1
 -1
 14.0
@@ -1157,7 +1157,7 @@ CHOOSER
 Edit-mode
 Edit-mode
 "Paint Blue" "Paint Red" "Paint Black" "Erase" "Big Eraser"
-4
+0
 
 BUTTON
 204
@@ -1177,10 +1177,10 @@ NIL
 1
 
 TEXTBOX
-119
-391
-423
-421
+121
+379
+425
+409
 Note: Use \"Continuous\" mode for the best experience
 12
 125.0
