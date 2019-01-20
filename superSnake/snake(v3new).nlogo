@@ -25,9 +25,9 @@ globals[
   Name1;Label of snake 1
   Name2;Label of snake 2
   Map0;Used as the base for the functions
-  Map1;1st Player Created Maps
-  Map2;2nd
-  Map3;3rd
+  Map1;1st Player-Created Maps
+  Map2;2nd Map
+  Map3;3rd Map
 ]
 
 patches-own [
@@ -477,12 +477,12 @@ to Mode
   ]
 
   SPaWn-selector
-  set Mode-selector Gamemode
+  set Mode-selector Gamemode ;prevents game glitches when switching in game.
 end
 
 to normal-game
   resize-world -24 24 -24 24
-  set restrict-1 [red blue yellow orange 88 18 1]
+  set restrict-1 [red blue yellow orange 88 18 1];These are the patch colors that kill in normal
   set restrict-2 restrict-1
   set bombs? true
 end
@@ -517,7 +517,7 @@ to Competitive-game
   set comp-timer 900
 end
 
-to spawn-selector
+to spawn-selector;CHooses snakes spawn points (depends on the gamemode)
   ifelse Gamemode = "Competitive"
   [
     set Spawn-1 (patch -24 0)
@@ -528,7 +528,7 @@ to spawn-selector
   ]
 end
 
-to Mode-go
+to Mode-go; This is the basis for the changed actions during the different modes. Includes food-spawn and other non-universal functions here.
   if member? Mode-selector ["Normal" "No Competition"]
     [food-spawn-go Victory]
 
@@ -595,7 +595,7 @@ to credits-screen ;credit screen, makes patches form the words "Super Snake by b
   [ask patch-at -5 0 [set pcolor black]]
 end
 
-;;Dev Tools
+;;Dev Tools- Create own maps and stuff
 to Canvas
   Variable-setup
   reset-ticks
@@ -615,7 +615,7 @@ to erase ;Erasing function. Resets pcolor.
     reset-ticks]
 end
 
-to big-erase
+to big-erase ;Erases a larger area
   if mouse-down?
   [ask patch mouse-xcor mouse-ycor
     [reset-patches
@@ -624,7 +624,7 @@ to big-erase
     Reset-ticks]
 end
 
-to edit
+to edit ;The all-in-one function depends on edit-mode
   ifelse any? turtles
   [stop]
   [
@@ -645,7 +645,7 @@ to-report save [color-z] ;save patches with a certain pcolor as a list.
   report list-z
 end
 
-to save-map-go
+to save-map-go; Saves the patches with an intermedierary
   set Map0 [true]
   set Map0 lput (save 88) Map0
   set Map0 lput (save 18) Map0
@@ -662,7 +662,7 @@ to Save-map
   ]
 end
 
-to Original-Map [num]
+to Original-Map [num]; Reads the player-created maps and summons them
   if (is-list? num)
   [ask patches at-points (item 1 num)
     [set pcolor 88]
