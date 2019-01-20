@@ -281,6 +281,7 @@ to food-spawn-competitive [side] ;spawns food for competitive gamemode
 end
 
 to world-setup ;sets up the world
+  set-patch-size 14
   ask patches with [pcolor = 0][Reset-patches] ;creates checkerboard pattern
 end
 
@@ -351,7 +352,7 @@ to bomb-tick;Counts down the time until you can place a bomb
   ]
 end
 
-;Bomb Expoldes and blinks shortly before exploding.
+;Bomb Explodes and blinks shortly before exploding.
 to bomb-explode
   ask patches with [bomb-timer = 0 and pcolor = white]
   [ask bombs in-radius 3[die]
@@ -673,20 +674,20 @@ to Original-Map [num]; Reads the player-created maps and summons them
   ]
 end
 
-
+;;Fun
 to Divide-by-cake; When length of a snake is 0. everything fucks up
   Set length-1 0
   set length-2 0
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-423
-17
-895
-490
+446
+51
+1137
+743
 -1
 -1
-9.485
+14.0
 1
 10
 1
@@ -707,10 +708,10 @@ ticks
 30.0
 
 BUTTON
-3
-10
-97
-119
+7
+51
+120
+160
 Start
 setup
 NIL
@@ -724,10 +725,10 @@ NIL
 1
 
 BUTTON
-314
-10
-410
 120
+51
+216
+161
 Go
 go
 T
@@ -741,11 +742,11 @@ NIL
 1
 
 BUTTON
-35
-306
-91
-340
-Up 1
+66
+259
+129
+293
+Up
 north 1
 NIL
 1
@@ -758,11 +759,11 @@ NIL
 1
 
 BUTTON
-276
-311
-332
-345
-Up 2
+300
+262
+363
+296
+Up
 north 2\n\n
 NIL
 1
@@ -775,11 +776,11 @@ NIL
 1
 
 BUTTON
-60
-347
-116
-381
-Down 1
+66
+326
+130
+360
+Down
 south 1\n
 NIL
 1
@@ -792,11 +793,11 @@ NIL
 1
 
 BUTTON
-299
-349
-355
-383
-Down 2
+300
+330
+364
+364
+Down
 south 2\n
 NIL
 1
@@ -809,11 +810,11 @@ NIL
 1
 
 BUTTON
-118
-347
-174
-381
-Right 1
+129
+303
+194
+337
+Right
 east 1
 NIL
 1
@@ -826,11 +827,11 @@ NIL
 1
 
 BUTTON
-0
-346
-56
-380
-Left 1
+9
+304
+66
+338
+Left
 west 1
 NIL
 1
@@ -843,11 +844,11 @@ NIL
 1
 
 BUTTON
-359
-349
-415
-383
-Right 2
+363
+307
+429
+341
+Right
 east 2\n
 NIL
 1
@@ -860,11 +861,11 @@ NIL
 1
 
 BUTTON
-239
-349
-295
-383
-Left 2
+243
+306
+300
+340
+Left
 west 2
 NIL
 1
@@ -877,11 +878,11 @@ NIL
 1
 
 BUTTON
-99
-306
-155
-340
-Bomb 1
+66
+292
+129
+326
+Bomb
 bomb-summon 1\n
 NIL
 1
@@ -894,10 +895,10 @@ NIL
 1
 
 MONITOR
-96
-250
-162
-295
+129
+259
+195
+304
 Cooldown
 100 - bomb-1
 17
@@ -905,10 +906,10 @@ Cooldown
 11
 
 MONITOR
-337
-252
-403
-297
+363
+262
+429
+307
 Cooldown
 100 - bomb-2
 17
@@ -916,11 +917,11 @@ Cooldown
 11
 
 BUTTON
-340
-311
-399
-345
-Bomb 2
+300
+296
+363
+330
+Bomb
 bomb-summon 2
 NIL
 1
@@ -933,10 +934,10 @@ NIL
 1
 
 MONITOR
-27
-250
-84
-295
+9
+259
+66
+304
 NIL
 Player1
 17
@@ -944,10 +945,10 @@ Player1
 11
 
 MONITOR
-268
-253
-325
-298
+243
+262
+300
+307
 NIL
 Player2
 17
@@ -955,45 +956,45 @@ Player2
 11
 
 CHOOSER
-102
-66
-194
-111
+12
+635
+155
+680
 Maps
 Maps
 "Plain" "Border" "Hideout" "Space" "Mount" "Minecraft" "Map1" "Map2" "Map3"
 7
 
 SLIDER
-276
-128
-410
-161
-speed
-speed
+155
+590
+298
+623
+Speed
+Speed
 0
 10
-7.0
+10.0
 1
 1
 NIL
 HORIZONTAL
 
 CHOOSER
-3
-128
-135
-173
+12
+590
+155
+635
 Gamemode
 Gamemode
 "Normal" "No Competition" "Friendly World Dig" "Competitive"
 0
 
 BUTTON
-172
-255
-258
-289
+120
+160
+216
+208
 Reset Wins
 reset-wins 
 NIL
@@ -1007,32 +1008,32 @@ NIL
 1
 
 MONITOR
-56
-199
-119
-244
+228
+108
+309
+165
 NIL
 P1-Score
 17
 1
-11
+14
 
 MONITOR
-297
-198
-360
-243
+309
+108
+390
+165
 NIL
 P2-Score
 17
 1
-11
+14
 
 BUTTON
-262
-514
-369
-547
+14
+715
+148
+748
 Cake Apocalypse
 Divide-by-Cake
 NIL
@@ -1046,41 +1047,41 @@ NIL
 1
 
 CHOOSER
-102
-10
-194
-55
+12
+545
+155
+590
 Players
 Players
 1 2
-0
+1
 
 CHOOSER
-211
-10
-303
-55
+155
+545
+298
+590
 Food
 Food
 1 2 3 4 5
 2
 
 MONITOR
-156
-196
-265
-237
+228
+51
+390
+108
 Competitive Timer
 ceiling (Comp-timer / 15)
 17
 1
-10
+14
 
 SWITCH
-204
-75
-311
-108
+155
+623
+298
+656
 Ask-Mode?
 Ask-Mode?
 1
@@ -1088,10 +1089,10 @@ Ask-Mode?
 -1000
 
 BUTTON
-142
-129
-270
-177
+7
+160
+120
+208
 Reset Game
 Startup
 NIL
@@ -1105,10 +1106,10 @@ NIL
 1
 
 BUTTON
-31
-481
-108
-514
+12
+412
+89
+501
 NIL
 Canvas
 NIL
@@ -1122,20 +1123,20 @@ NIL
 1
 
 TEXTBOX
-19
-424
-130
-454
+11
+380
+122
+410
 DevTools
 24
 124.0
 1
 
 BUTTON
-133
-480
-212
-513
+89
+412
+204
+456
 NIL
 Edit
 T
@@ -1149,20 +1150,20 @@ NIL
 1
 
 CHOOSER
-129
-525
-221
-570
+89
+456
+204
+501
 Edit-mode
 Edit-mode
 "Paint Blue" "Paint Red" "Paint Black" "Erase" "Big Eraser"
-1
+4
 
 BUTTON
-25
-528
-117
-561
+204
+412
+280
+502
 NIL
 Save-Map
 NIL
@@ -1176,13 +1177,63 @@ NIL
 1
 
 TEXTBOX
-168
-434
-349
-464
-Using Continuous for this area makes it slightly less choppy
+119
+391
+423
+421
+Note: Use \"Continuous\" mode for the best experience
+12
+125.0
+1
+
+TEXTBOX
+8
+10
+158
+49
+Play
+32
+125.0
+1
+
+TEXTBOX
+8
+236
+158
+261
+Player 1
+20
+105.0
+1
+
+TEXTBOX
+243
+237
+393
+262
+Player 2
+20
+15.0
+1
+
+TEXTBOX
 11
-0.0
+515
+161
+546
+Ruleset
+25
+5.0
+1
+
+TEXTBOX
+13
+687
+252
+749
+Fun / Experimental
+25
+25.0
 1
 
 @#$#@#$#@
