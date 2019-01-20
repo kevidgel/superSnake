@@ -36,6 +36,12 @@ breed [snakes-2 snake-2]
 breed [cakes cake]
 breed [bombs bomb]
 
+to startup;this should ask you to do something when you start
+  set gamemode user-one-of "Which Gamemode?"
+  ["Normal" "No Competition" "Friendly World Dig" "Competitive"]
+  set players user-one-of "How many Players?"
+  [1 2]
+end
 ;;Main functions
 ;Setup sets up world
 to setup
@@ -498,8 +504,8 @@ end
 GRAPHICS-WINDOW
 423
 17
-1471
-541
+895
+490
 -1
 -1
 9.485
@@ -512,8 +518,8 @@ GRAPHICS-WINDOW
 1
 1
 1
--49
-49
+-24
+24
 -24
 24
 1
@@ -789,18 +795,18 @@ CHOOSER
 Maps
 Maps
 "Plain" "Border" "Battlefield" "Hideout" "Space" "Mount" "Minecraft"
-0
+3
 
 SLIDER
 276
-125
+128
 410
-158
+161
 speed
 speed
 0
 10
-10.0
+6.0
 1
 1
 NIL
@@ -814,7 +820,7 @@ CHOOSER
 Gamemode
 Gamemode
 "Normal" "No Competition" "Friendly World Dig" "Competitive"
-3
+0
 
 BUTTON
 171
