@@ -962,7 +962,7 @@ CHOOSER
 Maps
 Maps
 "Plain" "Border" "Hideout" "Space" "Mount" "Minecraft" "Map1" "Map2" "Map3"
-6
+7
 
 SLIDER
 276
@@ -1029,10 +1029,10 @@ P2-Score
 11
 
 BUTTON
-282
-565
-406
-598
+262
+514
+369
+547
 Cake Apocalypse
 Divide-by-Cake
 NIL
@@ -1132,10 +1132,10 @@ DevTools
 1
 
 BUTTON
-151
-486
-230
-519
+133
+480
+212
+513
 NIL
 Edit
 T
@@ -1149,14 +1149,41 @@ NIL
 1
 
 CHOOSER
-275
-481
-413
-526
+129
+525
+221
+570
 Edit-mode
 Edit-mode
 "Paint Blue" "Paint Red" "Paint Black" "Erase" "Big Eraser"
-0
+1
+
+BUTTON
+25
+528
+117
+561
+NIL
+Save-Map
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+TEXTBOX
+168
+434
+349
+464
+Using Continuous for this area makes it slightly less choppy
+11
+0.0
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
