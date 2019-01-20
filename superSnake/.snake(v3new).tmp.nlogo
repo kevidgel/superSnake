@@ -82,6 +82,7 @@ to variable-setup ;workaround for ca. Not all globals will be cleared, only some
   set mode-selector "normal"
   set Comp-timer 0
   set bombs? true
+  set Map0 0
   ifelse reset? = 0 [
     set wins [0 0]
     set game-number 0
@@ -295,6 +296,8 @@ to map-selector
   if Maps = "Space" [space_map]
   if Maps = "Mount" [mount_map]
   if Maps = "Minecraft" [minecraft_map]
+  if Maps = ["Map1" "Map2" "Map3"]
+  [Original-Map read-from-string Map1]
 end
 
 ;maps are made using pxcor and pycor and certain rules for the pxcor and pycor.
@@ -549,7 +552,7 @@ end
 to credits-screen ;credit screen, makes patches form the words "Super Snake by brad2 - infinity"
   ct
   ask patches [ reset-patches ]
-  ask patches at-points [[2 7] [19 13] [13 7] [-3 12] [10 13] [5 10]
+  ask patches at-points [[2 7] [19 13] [13 7] [-3 12] [10 13] [5 10];Don't Worry We did not manually create this
     [-18 15] [0 12] [-11 18] [-8 10] [5 8] [11 7] [-13 19] [0 6] [-17 13]
     [0 8] [3 7] [-4 7] [-13 7] [16 9] [-16 13] [16 10] [-8 11] [11 13]
     [-11 12] [-5 7] [-18 19] [13 10] [0 2] [-17 7] [4 13] [3 13] [0 5]
@@ -563,7 +566,7 @@ to credits-screen ;credit screen, makes patches form the words "Super Snake by b
     [1 13] [-15 13] [-11 9] [-11 10] [-8 8] [5 13] [-7 7] [0 10] [0 7]
     [5 11] [0 9] [-3 11] [18 13] [11 10] [-6 7] [-13 13] [-16 7] [-8 12] [-3 9] [-18 7]]
   [ask patch-at -4 0 [set pcolor red]]
-  ask patches at-points [[-14 4] [11 -2] [15 -6] [15 -5] [-13 -8] [0 -8] [-7 -2] [5 -6]
+  ask patches at-points [[-14 4] [11 -2] [15 -6] [15 -5] [-13 -8] [0 -8] [-7 -2] [5 -6];We used our Devtools to do most of the work
     [-17 -2] [-6 -2] [8 -8] [-11 3] [12 0] [-16 -2] [-18 3] [-8 -3] [15 -3] [20 -8] [0 -2]
     [19 -2] [-11 -4] [10 -4] [8 2] [-8 -7] [9 -2] [-11 -6] [20 -3] [-12 -8] [12 -5] [-15 -8]
     [17 -8] [8 -2] [-11 -7] [11 -5] [-18 -7] [-18 4] [5 -2] [12 -2] [17 -2] [15 -2] [0 -4]
@@ -580,8 +583,8 @@ to credits-screen ;credit screen, makes patches form the words "Super Snake by b
     ask patch-at -4 0
     [sprout 1 [set shape "snake-head" set color pcolor set size 2.5]]
   ]
-  ask patches at-points [[22 -20] [15 -20] [-13 -19] [12 -18] [22 -16] [0 -16] [16 -19] [-4 -20] [3 -18]
-    [-6 -16] [-15 -20] [7 -18] [3 -16] [4 -16] [-11 -19] [-4 -18] [-9 -20] [-13 -20] [1 -16] [0 -17] [2 -16]
+  ask patches at-points [[22 -20] [15 -20] [-13 -19] [12 -18] [22 -16] [0 -16] [16 -19] [-4 -20] [3 -18];MODULAR DESIGN BOIS
+    [-6 -16] [-15 -20] [7 -18] [3 -16] [4 -16] [-11 -19] [-4 -18] [-9 -20] [-13 -20] [1 -16] [0 -17] [2 -16];We just don't want to import pcolors
     [-13 -18] [18 -19] [2 -21] [-11 -22] [-6 -19] [19 -16] [-12 -20] [13 -16] [3 -21] [-6 -17] [16 -17] [-6 -18]
     [12 -16] [12 -17] [-11 -20] [14 -16] [-6 -20] [2 -18] [21 -20] [2 -19] [-9 -18] [-5 -20] [2 -23] [22 -17]
     [4 -20] [-17 -20] [-15 -19] [8 -18] [22 -18] [18 -17] [-4 -19] [-11 -18] [-16 -18] [-2 -19] [9 -18] [2 -22]
@@ -658,8 +661,8 @@ to Save-map
   ]
 end
 
-to Select-Map [num]
-  ife (is-list? num)
+to Original-Map [num]
+  if (is-list? num)
   [ask patches at-points (item 1 num)
     [set pcolor 88]
     ask patches at-points (item 2 num)
@@ -957,8 +960,8 @@ CHOOSER
 111
 Maps
 Maps
-"Plain" "Border" "Hideout" "Space" "Mount" "Minecraft"
-1
+"Plain" "Border" "Hideout" "Space" "Mount" "Minecraft" "Map1" "Map2" "Map3"
+6
 
 SLIDER
 276
