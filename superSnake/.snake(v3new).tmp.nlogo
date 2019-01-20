@@ -420,7 +420,7 @@ to comp-victory ;Competitive timer-victory
     [snake2-win]]
 end
 
-to victory-animation [snake] ;sends the message to the user that the winning snake has won. Then asks whether to continue to another game (yes), let the winning snake keep playing (no), or to stop (halt).
+to victory-animation [snake] ;sends the message to the user that the winning snake has won. Then asks whether to continue to another game, k
   if user-yes-or-no? (word "Snake " snake " has won the game. Restart?" )
   [if ask-mode? [switch-mode] setup]
 end
@@ -433,11 +433,11 @@ to single-player-message
       setup]]
 end
 
-to-report P1-Score ;reports how many times player 1 won
+to-report P1-Score
   report item 0 wins
 end
 
-to-report P2-Score ;reports how many times player 2 won.
+to-report P2-Score
   report item 1 wins
 end
 
