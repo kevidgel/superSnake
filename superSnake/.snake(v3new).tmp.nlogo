@@ -829,10 +829,10 @@ Gamemode
 0
 
 BUTTON
-173
-320
-259
-354
+171
+267
+257
+301
 Reset Wins
 reset-wins 
 NIL
@@ -904,11 +904,21 @@ Food
 1 2 3 4 5
 2
 
+TEXTBOX
+42
+229
+192
+247
+NIL
+11
+0.0
+1
+
 MONITOR
-157
-261
-266
-302
+153
+141
+262
+182
 Competitive Timer
 ceiling (Comp-timer / 15)
 17
@@ -927,11 +937,11 @@ Ask-Mode?
 -1000
 
 BUTTON
-149
-127
-255
-175
-Startup-Prompt
+17
+183
+116
+243
+Name-Prompt
 Startup
 NIL
 1
