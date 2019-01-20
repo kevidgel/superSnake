@@ -24,6 +24,10 @@ globals[
   bombs?;decides if there are bombs for that gamemode (no longer a choice)
   Name1;Label of snake 1
   Name2;Label of snake 2
+  Map0;Used as the base for the functions
+  Map1;1st Player Created Maps
+  Map2;2nd
+  Map3;3rd
 ]
 
 patches-own [
@@ -44,6 +48,7 @@ to startup;this should ask you to select mode and names
   set name1 user-input "Name of Snake 1"
   set name2 user-input "Name of Snake 2"
   switch-mode
+  Credits-screen
 end
 
 to switch-mode;Prompts you to select gamemode and player number.
@@ -51,7 +56,6 @@ to switch-mode;Prompts you to select gamemode and player number.
   ["Normal" "No Competition" "Friendly World Dig" "Competitive"]
   set players user-one-of "How many Players?"
   [1 2]
-  credits-screen
 end
 ;
 ;;Main functions
@@ -96,7 +100,7 @@ to go
     Mode-go
     if bombs? [bomb-tick
       bomb-explode]
-    wait (10 - speed) * .01
+    wait (10 - speed) * .015
     single-player-message
     tick
   ]
@@ -420,7 +424,7 @@ to comp-victory ;Competitive timer-victory
     [snake2-win]]
 end
 
-to victory-animation [snake] ;sends the message to the user that the winning snake has won. Then asks whether to continue to another game, k
+to victory-animation [snake] ;sends the message to the user that the winning snake has won. Then asks whether to continue to another game (yes), let the winning snake keep playing (no), or to stop (halt).
   if user-yes-or-no? (word "Snake " snake " has won the game. Restart?" )
   [if ask-mode? [switch-mode] setup]
 end
@@ -433,11 +437,11 @@ to single-player-message
       setup]]
 end
 
-to-report P1-Score
+to-report P1-Score ;reports how many times player 1 won
   report item 0 wins
 end
 
-to-report P2-Score
+to-report P2-Score ;reports how many times player 2 won.
   report item 1 wins
 end
 
@@ -453,43 +457,60 @@ end
 to Mode
 
   if Gamemode = "Normal";Typical setup. Everything basicallly kills you
-  [resize-world -24 24 -24 24
-    set restrict-1 [red blue yellow orange 88]
-    set restrict-2 restrict-1
-    set bombs? true
+  [normal-game
   ]
 
   if Gamemode = "No Competition";Typical setup. opponent can't kill you
-  [resize-world -24 24 -24 24
-    set restrict-1 [blue yellow orange 88]
-    set restrict-2 [red yellow orange 88]
-    set bombs? true
+  [nocompetition-game
   ]
 
   if Gamemode = "Friendly World Dig";Causal Minecraft mining
-  [resize-world -24 24 -24 24
-    set bombs? true
-    ask patches [Reset-patches]
-    ask n-of 50 patches with [abs (pxcor) > 4]
-    [ask patches in-radius (random 3 + 1)[set pcolor 4 + random 3]]
-    set maps "Plain"
-    set restrict-1 [4 5 6]
-    set restrict-2 [4 5 6]]
+  [Dig-Game
+  ]
 
   if Gamemode = "Competitive"; Competition style snake. No bombs
-  [set restrict-1 [red blue yellow orange 88]
-    set bombs? false
-    set restrict-2 restrict-1
-    set maps "Plain"
-    resize-world -49 49 -24 24
-    ask patches with
-    [member? pxcor [0 -49 49] or member? pycor [-24 24]]
-    [set pcolor 88]
-    set comp-timer 900
+  [Competitive-game
   ]
 
   SPaWn-selector
   set Mode-selector Gamemode
+end
+
+to normal-game
+  resize-world -24 24 -24 24
+  set restrict-1 [red blue yellow orange 88 18]
+  set restrict-2 restrict-1
+  set bombs? true
+end
+
+to nocompetition-game
+  resize-world -24 24 -24 24
+  set restrict-1 [blue yellow orange 88 18]
+  set restrict-2 [red yellow orange 88 18]
+  set bombs? true
+end
+
+to Dig-game
+  resize-world -24 24 -24 24
+  set bombs? true
+  ask patches [Reset-patches]
+  ask n-of 50 patches with [abs (pxcor) > 4]
+  [ask patches in-radius (random 3 + 1)[set pcolor 4 + random 3]]
+  set maps "Plain"
+  set restrict-1 [4 5 6]
+  set restrict-2 [4 5 6]
+end
+
+to Competitive-game
+  set restrict-1 [red blue yellow orange 88]
+  set bombs? false
+  set restrict-2 restrict-1
+  set maps "Plain"
+  resize-world -49 49 -24 24
+  ask patches with
+  [member? pxcor [0 -49 49] or member? pycor [-24 24]]
+  [set pcolor 88]
+  set comp-timer 900
 end
 
 to spawn-selector
@@ -528,28 +549,87 @@ end
 to credits-screen ;credit screen, makes patches form the words "Super Snake by brad2 - infinity"
   ct
   ask patches [ reset-patches ]
-  ask patches at-points [[2 7] [19 13] [13 7] [-3 12] [10 13] [5 10] [-18 15] [0 12] [-11 18] [-8 10] [5 8] [11 7] [-13 19] [0 6] [-17 13] [0 8] [3 7] [-4 7] [-13 7] [16 9] [-16 13] [16 10] [-8 11] [11 13] [-11 12] [-5 7] [-18 19] [13 10] [0 2] [-17 7] [4 13] [3 13] [0 5] [-11 11] [5 12] [9 7] [17 13] [-18 16] [0 3] [8 7] [10 10] [8 11] [0 13] [-17 19] [8 8] [0 4] [0 1] [-11 8] [13 13] [-12 7] [10 7] [12 10] [-18 8] [-15 7] [-8 13] [16 11] [-14 19] [-11 7] [16 12] [0 11] [-3 13] [-3 8] [8 10] [16 7] [-18 14] [13 12] [4 7] [9 13] [-8 9] [2 13] [-16 19] [8 12] [-11 19] [16 8] [-12 19] [12 7] [-11 17] [-12 13] [-8 7] [16 13] [5 9] [-11 13] [12 13] [-18 18] [-3 7] [-14 13] [-15 19] [8 9] [-14 7] [-18 17] [-18 13] [-3 10] [5 7] [13 11] [8 13] [1 13] [-15 13] [-11 9] [-11 10] [-8 8] [5 13] [-7 7] [0 10] [0 7] [5 11] [0 9] [-3 11] [18 13] [11 10] [-6 7] [-13 13] [-16 7] [-8 12] [-3 9] [-18 7]]
+  ask patches at-points [[2 7] [19 13] [13 7] [-3 12] [10 13] [5 10]
+    [-18 15] [0 12] [-11 18] [-8 10] [5 8] [11 7] [-13 19] [0 6] [-17 13]
+    [0 8] [3 7] [-4 7] [-13 7] [16 9] [-16 13] [16 10] [-8 11] [11 13]
+    [-11 12] [-5 7] [-18 19] [13 10] [0 2] [-17 7] [4 13] [3 13] [0 5]
+    [-11 11] [5 12] [9 7] [17 13] [-18 16] [0 3] [8 7] [10 10] [8 11]
+    [0 13] [-17 19] [8 8] [0 4] [0 1] [-11 8] [13 13] [-12 7] [10 7]
+    [12 10] [-18 8] [-15 7] [-8 13] [16 11] [-14 19] [-11 7] [16 12]
+    [0 11] [-3 13] [-3 8] [8 10] [16 7] [-18 14] [13 12] [4 7] [9 13]
+    [-8 9] [2 13] [-16 19] [8 12] [-11 19] [16 8] [-12 19] [12 7] [-11 17]
+    [-12 13] [-8 7] [16 13] [5 9] [-11 13] [12 13] [-18 18] [-3 7] [-14 13]
+    [-15 19] [8 9] [-14 7] [-18 17] [-18 13] [-3 10] [5 7] [13 11] [8 13]
+    [1 13] [-15 13] [-11 9] [-11 10] [-8 8] [5 13] [-7 7] [0 10] [0 7]
+    [5 11] [0 9] [-3 11] [18 13] [11 10] [-6 7] [-13 13] [-16 7] [-8 12] [-3 9] [-18 7]]
   [ask patch-at -4 0 [set pcolor red]]
-  ask patches at-points [[-14 4] [11 -2] [15 -6] [15 -5] [-13 -8] [0 -8] [-7 -2] [5 -6] [-17 -2] [-6 -2] [8 -8] [-11 3] [12 0] [-16 -2] [-18 3] [-8 -3] [15 -3] [20 -8] [0 -2] [19 -2] [-11 -4] [10 -4] [8 2] [-8 -7] [9 -2] [-11 -6] [20 -3] [-12 -8] [12 -5] [-15 -8] [17 -8] [8 -2] [-11 -7] [11 -5] [-18 -7] [-18 4] [5 -2] [12 -2] [17 -2] [15 -2] [0 -4] [12 -7] [4 -8] [-14 -8] [10 -2] [-8 -2] [8 -4] [-14 -2] [20 -5] [-17 -8] [0 -6] [15 -7] [-13 -2] [16 -2] [-15 4] [-16 4] [5 -4] [-3 -8] [-13 4] [3 -8] [-8 -8] [19 -8] [-11 -8] [-3 -5] [-18 -2] [8 -5] [-3 -3] [-18 0] [0 -7] [-11 -2] [0 -3] [-15 -2] [12 -6] [-8 -4] [16 -8] [-17 4] [2 -2] [18 -5] [5 -8] [19 -5] [18 -2] [11 -4] [-18 1] [-3 -4] [-8 -5] [18 -8] [5 -5] [5 -3] [-18 2] [8 -1] [9 -4] [20 -4] [8 0] [-12 4] [12 -1] [17 -5] [8 -7] [-3 -2] [-11 -3] [15 -8] [-3 -6] [3 -2] [-12 -2] [-3 -7] [0 -5] [-16 -8] [-11 4] [-4 -2] [15 -4] [-18 -1] [-5 -2] [8 1] [-18 -8] [1 -2] [-8 -6] [4 -2] [2 -8] [-11 -5] [1 -8] [20 -2] [8 -6] [12 -8]]
+  ask patches at-points [[-14 4] [11 -2] [15 -6] [15 -5] [-13 -8] [0 -8] [-7 -2] [5 -6]
+    [-17 -2] [-6 -2] [8 -8] [-11 3] [12 0] [-16 -2] [-18 3] [-8 -3] [15 -3] [20 -8] [0 -2]
+    [19 -2] [-11 -4] [10 -4] [8 2] [-8 -7] [9 -2] [-11 -6] [20 -3] [-12 -8] [12 -5] [-15 -8]
+    [17 -8] [8 -2] [-11 -7] [11 -5] [-18 -7] [-18 4] [5 -2] [12 -2] [17 -2] [15 -2] [0 -4]
+    [12 -7] [4 -8] [-14 -8] [10 -2] [-8 -2] [8 -4] [-14 -2] [20 -5] [-17 -8] [0 -6] [15 -7]
+    [-13 -2] [16 -2] [-15 4] [-16 4] [5 -4] [-3 -8] [-13 4] [3 -8] [-8 -8] [19 -8] [-11 -8]
+    [-3 -5] [-18 -2] [8 -5] [-3 -3] [-18 0] [0 -7] [-11 -2] [0 -3] [-15 -2] [12 -6] [-8 -4]
+    [16 -8] [-17 4] [2 -2] [18 -5] [5 -8] [19 -5] [18 -2] [11 -4] [-18 1] [-3 -4] [-8 -5]
+    [18 -8] [5 -5] [5 -3] [-18 2] [8 -1] [9 -4] [20 -4] [8 0] [-12 4] [12 -1] [17 -5] [8 -7]
+    [-3 -2] [-11 -3] [15 -8] [-3 -6] [3 -2] [-12 -2] [-3 -7] [0 -5] [-16 -8] [-11 4] [-4 -2]
+    [15 -4] [-18 -1] [-5 -2] [8 1] [-18 -8] [1 -2] [-8 -6] [4 -2] [2 -8] [-11 -5] [1 -8] [20 -2] [8 -6] [12 -8]]
   [ask patch-at -4 0 [set pcolor blue]]
   ask patches at-points [[-11 17] [-8 13] [0 1] [10 10] [19 13] [-18 -7] [-3 -8] [12 0] [8 -8] [17 -5] [5 -6]]
   [
     ask patch-at -4 0
     [sprout 1 [set shape "snake-head" set color pcolor set size 2.5]]
   ]
-  ask patches at-points [[22 -20] [15 -20] [-13 -19] [12 -18] [22 -16] [0 -16] [16 -19] [-4 -20] [3 -18] [-6 -16] [-15 -20] [7 -18] [3 -16] [4 -16] [-11 -19] [-4 -18] [-9 -20] [-13 -20] [1 -16] [0 -17] [2 -16] [-13 -18] [18 -19] [2 -21] [-11 -22] [-6 -19] [19 -16] [-12 -20] [13 -16] [3 -21] [-6 -17] [16 -17] [-6 -18] [12 -16] [12 -17] [-11 -20] [14 -16] [-6 -20] [2 -18] [21 -20] [2 -19] [-9 -18] [-5 -20] [2 -23] [22 -17] [4 -20] [-17 -20] [-15 -19] [8 -18] [22 -18] [18 -17] [-4 -19] [-11 -18] [-16 -18] [-2 -19] [9 -18] [2 -22] [20 -20] [0 -18] [-17 -19] [-11 -21] [17 -18] [22 -19] [-15 -18] [12 -20] [-17 -16] [-17 -17] [19 -20] [21 -16] [15 -16] [13 -20] [14 -20] [-5 -18] [4 -19] [-17 -18] [3 -23] [-1 -20] [4 -23] [4 -18] [0 -19] [12 -19] [20 -16] [-16 -20]]
+  ask patches at-points [[22 -20] [15 -20] [-13 -19] [12 -18] [22 -16] [0 -16] [16 -19] [-4 -20] [3 -18]
+    [-6 -16] [-15 -20] [7 -18] [3 -16] [4 -16] [-11 -19] [-4 -18] [-9 -20] [-13 -20] [1 -16] [0 -17] [2 -16]
+    [-13 -18] [18 -19] [2 -21] [-11 -22] [-6 -19] [19 -16] [-12 -20] [13 -16] [3 -21] [-6 -17] [16 -17] [-6 -18]
+    [12 -16] [12 -17] [-11 -20] [14 -16] [-6 -20] [2 -18] [21 -20] [2 -19] [-9 -18] [-5 -20] [2 -23] [22 -17]
+    [4 -20] [-17 -20] [-15 -19] [8 -18] [22 -18] [18 -17] [-4 -19] [-11 -18] [-16 -18] [-2 -19] [9 -18] [2 -22]
+    [20 -20] [0 -18] [-17 -19] [-11 -21] [17 -18] [22 -19] [-15 -18] [12 -20] [-17 -16] [-17 -17] [19 -20]
+    [21 -16] [15 -16] [13 -20] [14 -20] [-5 -18] [4 -19] [-17 -18] [3 -23] [-1 -20] [4 -23] [4 -18] [0 -19]
+    [12 -19] [20 -16] [-16 -20] [-13 -22] [-12 -22]]
   [ask patch-at -5 0 [set pcolor black]]
 end
 
 ;;Dev Tools
-to paint ;Painting function for maps and credits screen
+to Canvas
+  Variable-setup
+  reset-ticks
+  world-setup
+end
+
+to paint [color-z];Painting function for maps and credits screen
   if mouse-down?
-  [ask patch mouse-xcor mouse-ycor [set pcolor black]]
+  [repeat 5
+    [ask patch mouse-xcor mouse-ycor [set pcolor color-z]]
+    reset-ticks]
 end
 
 to erase ;Erasing function. Resets pcolor.
   if mouse-down?
-  [ask patch mouse-xcor mouse-ycor [ reset-patches ]]
+  [ask patch mouse-xcor mouse-ycor [ reset-patches ]
+    reset-ticks]
+end
+
+to big-erase
+  if mouse-down?
+  [ask patch mouse-xcor mouse-ycor
+    [reset-patches
+      ask neighbors[reset-patches]
+    ]
+    Reset-ticks]
+end
+
+to edit
+  ifelse any? turtles
+  [stop]
+  [
+    if Edit-mode = "Paint Blue"[paint 88]
+    if Edit-mode = "Paint Red" [paint 18]
+    if Edit-mode = "Paint Black"[paint 1]
+    if Edit-mode = "Erase" [erase]
+    if Edit-mode = "Big Eraser" [big-erase]
+  ]
 end
 
 to-report save [color-z] ;save patches with a certain pcolor as a list.
@@ -559,6 +639,40 @@ to-report save [color-z] ;save patches with a certain pcolor as a list.
     set list-z lput (list (pxcor) (pycor)) list-z
   ]
   report list-z
+end
+
+to save-map-go
+  set Map0 [true]
+  set Map0 lput (save 88) Map0
+  set Map0 lput (save 18) Map0
+  Set Map0 lput (save 1) Map0
+end
+
+to Save-map
+  let Choice user-one-of "which map?" ["Map1" "Map2" "Map3" "Don't Save"]
+  if Choice != "Don't Save"
+  [Save-Map-go
+    if Choice = "Map1" [set Map1 Map0]
+    if Choice = "Map2" [set Map2 Map0]
+    if Choice = "Map3" [set Map3 Map0]
+  ]
+end
+
+to Select-Map [num]
+  ife (is-list? num)
+  [ask patches at-points (item 1 num)
+    [set pcolor 88]
+    ask patches at-points (item 2 num)
+    [set pcolor 18]
+    ask patches at-points (item 3 num)
+    [set pcolor 1]
+  ]
+end
+
+
+to Divide-by-cake; When length of a snake is 0. everything fucks up
+  Set length-1 0
+  set length-2 0
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -582,8 +696,8 @@ GRAPHICS-WINDOW
 24
 -24
 24
-0
-0
+1
+1
 1
 ticks
 30.0
@@ -623,10 +737,10 @@ NIL
 1
 
 BUTTON
-36
-371
-92
-405
+35
+306
+91
+340
 Up 1
 north 1
 NIL
@@ -640,10 +754,10 @@ NIL
 1
 
 BUTTON
-277
-376
-333
-410
+276
+311
+332
+345
 Up 2
 north 2\n\n
 NIL
@@ -657,10 +771,10 @@ NIL
 1
 
 BUTTON
-61
-412
-117
-446
+60
+347
+116
+381
 Down 1
 south 1\n
 NIL
@@ -674,10 +788,10 @@ NIL
 1
 
 BUTTON
-300
-414
-356
-448
+299
+349
+355
+383
 Down 2
 south 2\n
 NIL
@@ -691,10 +805,10 @@ NIL
 1
 
 BUTTON
-119
-412
-175
-446
+118
+347
+174
+381
 Right 1
 east 1
 NIL
@@ -708,10 +822,10 @@ NIL
 1
 
 BUTTON
-2
-412
-58
-446
+0
+346
+56
+380
 Left 1
 west 1
 NIL
@@ -725,10 +839,10 @@ NIL
 1
 
 BUTTON
-360
-414
-416
-448
+359
+349
+415
+383
 Right 2
 east 2\n
 NIL
@@ -742,10 +856,10 @@ NIL
 1
 
 BUTTON
-240
-414
-296
-448
+239
+349
+295
+383
 Left 2
 west 2
 NIL
@@ -759,10 +873,10 @@ NIL
 1
 
 BUTTON
-100
-371
-156
-405
+99
+306
+155
+340
 Bomb 1
 bomb-summon 1\n
 NIL
@@ -776,10 +890,10 @@ NIL
 1
 
 MONITOR
-97
-315
-163
-360
+96
+250
+162
+295
 Cooldown
 100 - bomb-1
 17
@@ -787,10 +901,10 @@ Cooldown
 11
 
 MONITOR
-338
-317
-404
-362
+337
+252
+403
+297
 Cooldown
 100 - bomb-2
 17
@@ -798,10 +912,10 @@ Cooldown
 11
 
 BUTTON
-341
-376
-400
-410
+340
+311
+399
+345
 Bomb 2
 bomb-summon 2
 NIL
@@ -815,10 +929,10 @@ NIL
 1
 
 MONITOR
-28
-315
-85
-360
+27
+250
+84
+295
 NIL
 Player1
 17
@@ -826,10 +940,10 @@ Player1
 11
 
 MONITOR
-269
-318
-326
-363
+268
+253
+325
+298
 NIL
 Player2
 17
@@ -844,7 +958,7 @@ CHOOSER
 Maps
 Maps
 "Plain" "Border" "Hideout" "Space" "Mount" "Minecraft"
-0
+1
 
 SLIDER
 276
@@ -855,7 +969,7 @@ speed
 speed
 0
 10
-5.0
+7.0
 1
 1
 NIL
@@ -872,10 +986,10 @@ Gamemode
 0
 
 BUTTON
-173
-320
-259
-354
+172
+255
+258
+289
 Reset Wins
 reset-wins 
 NIL
@@ -889,10 +1003,10 @@ NIL
 1
 
 MONITOR
-57
-264
-120
-309
+56
+199
+119
+244
 NIL
 P1-Score
 17
@@ -900,10 +1014,10 @@ P1-Score
 11
 
 MONITOR
-298
-263
-361
-308
+297
+198
+360
+243
 NIL
 P2-Score
 17
@@ -911,12 +1025,12 @@ P2-Score
 11
 
 BUTTON
-22
-540
-146
-573
+282
+565
+406
+598
 Cake Apocalypse
-Set length-1 0\nset length-2 0
+Divide-by-Cake
 NIL
 1
 T
@@ -948,10 +1062,10 @@ Food
 2
 
 MONITOR
-157
-261
-266
-302
+156
+196
+265
+237
 Competitive Timer
 ceiling (Comp-timer / 15)
 17
@@ -985,6 +1099,60 @@ NIL
 NIL
 NIL
 1
+
+BUTTON
+31
+481
+108
+514
+NIL
+Canvas
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+TEXTBOX
+19
+424
+130
+454
+DevTools
+24
+124.0
+1
+
+BUTTON
+151
+486
+230
+519
+NIL
+Edit
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+CHOOSER
+275
+481
+413
+526
+Edit-mode
+Edit-mode
+"Paint Blue" "Paint Red" "Paint Black" "Erase" "Big Eraser"
+0
 
 @#$#@#$#@
 ## WHAT IS IT?
