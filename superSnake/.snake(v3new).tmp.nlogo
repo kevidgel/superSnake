@@ -1269,7 +1269,7 @@ The World <ザ・ワールド(世界)>
 @#$#@#$#@
 # Welcome to superSnake!
 
-## What is it?
+## W
 
 This model will be a modified version of the classic game Snake. 
 Snake is a game where a “snake” moves around the world and eats food pellets in order to grow. 
@@ -1277,7 +1277,7 @@ This games adds an interesting twist to Snake; now there are several modes such 
 Overall, this project is using the classic game Snake and putting an interesting twist to it in order to make it more fun. 
 
 
-## Controls
+## CONTROLS
 
 Press "Start" to setup the game. 
 Press "Go" to begin the game. 
@@ -1290,7 +1290,7 @@ Use IJKL to move snake 2.
 E will cause snake 1 to drop bombs.
 O will cause snake 2 to drop bombs.
 
-## Ruleset
+## RULESET
 
 The "Players" chooser will determine how many players there will be in the game. 
 The "Gamemode" chooser will choose which gamemode you wish to play in. More information is in the GAMEMODE section. 
@@ -1299,11 +1299,11 @@ The "Food" chooser will determine how many cakes will spawn in the world. (For c
 The switch "Ask-Mode?" will toggle whether you wish to be prompted to switch your gamemode everytime. 
 You can choose which map to play on using the chooser "Maps." 
 
-## Gamemodes
+## GAMEMODES
 
 (insert stuff about gamemodes David)
 
-## DevTools
+## DEVTOOLS
 
 You can now customize maps in superSnake!
 Press "Canvas" to create a blank world, where you will "paint" your masterpiece. 
@@ -1311,12 +1311,15 @@ Press "Edit" to edit the canvas; use the chooser "Edit-mode" to choose how you w
 Press "Save-Map" to save your masterpiece to "Map 1," "Map 2," or "Map 3."
 Go back to the chooser "Maps" to choose your saved map, and press Start to play. 
 
-## How it Works
+## HOW IT WORKS
 
 There will be three types of functions that we will use, the ones that control the movements and life cycles for the snake, the ones that control the environment (food pellets, etc.), and the ones that control the different game modes (bombs, # of snakes, etc.). Two main functions, called “setup” and “go” will set up the world of Snake and start the game. These two functions will also incorporate the other functions through modular design. 
 Four functions dictate the life cycle of a snake. The first function is called “snake-setup,” which will spawn snakes randomly throughout the world, and set their respective snake variables. The second function will be “snake-move,” which controls how the snakes move throughout the world. This function utilizes modular design, for left, right, up, and down controls. The third function will be “snake-die,” as it will detect if a snake has touched itself or another snake and that kill that snake. The last function will be “snake-eat,” which will manage snake-eating.
 For the functions that will control and modify the environment of the snakes, there will be two. One is “world-setup” which will setup the world, clearing the world of food pellets and snakes, and resetting patch and turtle variables. The second function is “food-spawn,” which will spawn food for the snakes to eat. 
 Gamemodes are made by modifying the go and setup functions in such a way that they are tailored to each type of gamemode.
+
+## COMMENTS
+
 
 ## NEW IN VERSION 4.0
 +New startup popup
