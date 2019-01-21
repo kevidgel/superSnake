@@ -610,7 +610,7 @@ to paint [color-z];Painting function for maps and credits screen
     reset-ticks]
 end
 
-to erase ;Erasing function Resets pcolor.
+to erase ;Erasing function- Resets pcolor.
   if mouse-down?
   [ask patch mouse-xcor mouse-ycor [ reset-patches ]
     reset-ticks]
@@ -637,7 +637,7 @@ to edit ;The all-in-one function depends on edit-mode
   ]
 end
 
-to-report save [color-z] ;save patches with a certain pcolor as a list.
+to-report save [color-z] ;Saves patches with a certain pcolor as a list.
   let list-z []
   ask patches with [pcolor = color-z]
   [
@@ -938,7 +938,7 @@ MONITOR
 259
 66
 304
-NIL
+Length
 Player1
 17
 1
