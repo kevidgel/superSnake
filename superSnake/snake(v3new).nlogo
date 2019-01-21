@@ -938,7 +938,7 @@ MONITOR
 259
 66
 304
-NIL
+Length
 Player1
 17
 1
@@ -949,7 +949,7 @@ MONITOR
 262
 300
 307
-NIL
+Length
 Player2
 17
 1
