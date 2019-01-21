@@ -477,6 +477,9 @@ to Mode
   [Competitive-game
   ]
 
+  if Gamemode = "Death-Match"; DeathMatch, no food self increases.
+  [DeathMatch-Game
+  ]
   SPaWn-selector
   set Mode-selector Gamemode ;prevents game glitches when switching in game.
 end
@@ -518,6 +521,14 @@ to Competitive-game
   set comp-timer 900
 end
 
+to Deathmatch-game
+  set comp-timer 75
+  set restrict-1 [red blue yellow orange 88 18 1]
+  set restrict-2 restrict-1
+  set bombs? true
+end
+
+
 to spawn-selector;Chooses snakes spawn points (depends on the gamemode)
   ifelse Gamemode = "Competitive"
   [
@@ -542,13 +553,31 @@ to Mode-go; This is the basis for the changed actions during the different modes
   ]]
 
   if Mode-selector = "Competitive"
-  [#_Of_Cakes-spawn-competitive -1
-    #_Of_Cakes-spawn-competitive 1
-    set comp-timer comp-timer - 1
-    if comp-timer = 0 [comp-victory]
-    Victory
+  [Comp-go
+  ]
+
+  if Mode-selector = "Death-Match"
+  [Match-go
   ]
 end
+
+to Comp-go;competitive go
+  #_Of_Cakes-spawn-competitive -1
+  #_Of_Cakes-spawn-competitive 1
+  set comp-timer comp-timer - 1
+  if comp-timer = 0 [comp-victory]
+  Victory
+end
+
+to Match-go
+  set comp-timer comp-timer - 1
+  if comp-timer = 0
+  [set length-1 length-1 + random 2 + 1
+    set length-2 length-2 + random 2 + 1
+    set comp-timer 45]
+  Victory
+end
+
 
 ;;Misc
 to credits-screen ;credit screen, makes patches form the words "Super Snake by b-rad2 - infinity"
@@ -987,8 +1016,8 @@ CHOOSER
 635
 Gamemode
 Gamemode
-"Normal" "No Competition" "Friendly World Dig" "Competitive"
-0
+"Normal" "No Competition" "Friendly World Dig" "Competitive" "Death-Match"
+4
 
 BUTTON
 120
@@ -1157,7 +1186,7 @@ CHOOSER
 Color_
 Color_
 "Paint Blue" "Paint Red" "Paint Black" "Erase" "Big Eraser"
-0
+4
 
 BUTTON
 204

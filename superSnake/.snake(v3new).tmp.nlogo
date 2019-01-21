@@ -477,6 +477,9 @@ to Mode
   [Competitive-game
   ]
 
+  if Gamemode = "Death-Match"; DeathMatch, no food self increases.
+  [DeathMatch-Game
+  ]
   SPaWn-selector
   set Mode-selector Gamemode ;prevents game glitches when switching in game.
 end
@@ -518,6 +521,14 @@ to Competitive-game
   set comp-timer 900
 end
 
+to Deathmatch-game
+  set comp-timer 75
+  set restrict-1 [red blue yellow orange 88 18 1]
+  set restrict-2 restrict-1
+  set bombs? true
+end
+
+
 to spawn-selector;Chooses snakes spawn points (depends on the gamemode)
   ifelse Gamemode = "Competitive"
   [
@@ -542,13 +553,31 @@ to Mode-go; This is the basis for the changed actions during the different modes
   ]]
 
   if Mode-selector = "Competitive"
-  [#_Of_Cakes-spawn-competitive -1
-    #_Of_Cakes-spawn-competitive 1
-    set comp-timer comp-timer - 1
-    if comp-timer = 0 [comp-victory]
-    Victory
+  [Comp-go
+  ]
+
+  if Mode-selector = "Death-Match"
+  [Match-go
   ]
 end
+
+to Comp-go;competitive go
+  #_Of_Cakes-spawn-competitive -1
+  #_Of_Cakes-spawn-competitive 1
+  set comp-timer comp-timer - 1
+  if comp-timer = 0 [comp-victory]
+  Victory
+end
+
+to Match-go
+  set comp-timer comp-timer - 1
+  if comp-timer = 0
+  [set length-1 length-1 + 1
+    set length-2 length-2 + 1
+    set comp-timer 75]
+
+end
+
 
 ;;Misc
 to credits-screen ;credit screen, makes patches form the words "Super Snake by b-rad2 - infinity"
@@ -759,10 +788,10 @@ NIL
 1
 
 BUTTON
-300
-262
-363
-296
+283
+258
+346
+292
 Up
 north 2\n\n
 NIL
@@ -793,10 +822,10 @@ NIL
 1
 
 BUTTON
-300
-330
-364
-364
+283
+325
+348
+360
 Down
 south 2\n
 NIL
@@ -844,10 +873,10 @@ NIL
 1
 
 BUTTON
-363
-307
-429
-341
+347
+303
+413
+337
 Right
 east 2\n
 NIL
@@ -861,10 +890,10 @@ NIL
 1
 
 BUTTON
-243
-306
-300
-340
+227
+302
+284
+336
 Left
 west 2
 NIL
@@ -906,10 +935,10 @@ Cooldown
 11
 
 MONITOR
-363
-262
-429
-307
+347
+258
+413
+303
 Cooldown
 100 - bomb-2
 17
@@ -917,10 +946,10 @@ Cooldown
 11
 
 BUTTON
-300
-296
-363
-330
+283
+292
+347
+327
 Bomb
 bomb-summon 2
 NIL
@@ -945,10 +974,10 @@ Player1
 11
 
 MONITOR
-243
-262
-300
-307
+227
+258
+284
+303
 Length
 Player2
 17
@@ -987,8 +1016,8 @@ CHOOSER
 635
 Gamemode
 Gamemode
-"Normal" "No Competition" "Friendly World Dig" "Competitive"
-0
+"Normal" "No Competition" "Friendly World Dig" "Competitive" "Death-Match"
+4
 
 BUTTON
 120
@@ -1157,7 +1186,7 @@ CHOOSER
 Color_
 Color_
 "Paint Blue" "Paint Red" "Paint Black" "Erase" "Big Eraser"
-0
+4
 
 BUTTON
 204
@@ -1207,10 +1236,10 @@ Player 1
 1
 
 TEXTBOX
-243
-237
-393
-262
+227
+233
+377
+258
 Player 2
 20
 15.0
