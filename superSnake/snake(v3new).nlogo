@@ -1266,6 +1266,16 @@ The World <ザ・ワールド(世界)>
 43.0
 1
 
+TEXTBOX
+228
+688
+378
+708
+Note: Use at your own risk
+12
+25.0
+1
+
 @#$#@#$#@
 # Welcome to superSnake!
 
