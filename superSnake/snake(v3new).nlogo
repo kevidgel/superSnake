@@ -35,7 +35,7 @@ patches-own [
   tail-2;Which part of snake 2 it is.
   snake? ;if it is a snake or not
   id ;identity of the snake
-  food-value; how much length the food provides
+  #_Of_Cakes-value; how much length the #_Of_Cakes provides
   bomb-timer; how much time left until bomb disappears/explodes.
 ]
 breed [snakes-1 snake-1]
@@ -54,7 +54,7 @@ end
 to switch-mode;Prompts you to select gamemode and player number.
   set gamemode user-one-of "Which Gamemode?"
   ["Normal" "No Competition" "Friendly World Dig" "Competitive"]
-  set players user-one-of "How many Players?"
+  set #_Of_Players user-one-of "How many #_Of_Players?"
   [1 2]
 end
 ;
@@ -126,7 +126,7 @@ to snake-setup
     set tail-1 1
   ]
   ask Spawn-2 [set snake? 1]
-  if Players != 1 [ ;checks if there is more than 1 player
+  if #_Of_Players != 1 [ ;checks if there is more than 1 player
     ask one-of patches with [snake? = 1 and pcolor != blue] [ ;player 2
       set pcolor red
       set length-2 3
@@ -176,14 +176,14 @@ end
 to snake-eat [long] ;how snakes eat
   if shade-of? pcolor brown[
     if long = 1
-    [set length-1 length-1 + food-value] ;depending on the player, if a snake is on a food patch, it sets its length to the length + the food value of the patch.
+    [set length-1 length-1 + #_Of_Cakes-value] ;depending on the player, if a snake is on a #_Of_Cakes patch, it sets its length to the length + the #_Of_Cakes value of the patch.
     if long = 2
-    [set length-2 length-2 + food-value]
+    [set length-2 length-2 + #_Of_Cakes-value]
     Reset-patches
     ask patch-here [
-      set food-value 0
+      set #_Of_Cakes-value 0
       ask cakes with [xcor = [pxcor] of myself and ycor = [pycor] of myself] [die]
-    ] ;resets patch food-value
+    ] ;resets patch #_Of_Cakes-value
   ]
 end
 
@@ -204,7 +204,7 @@ end
 
 to reset-patches ;resets patches to background color. Also clears patch variables.
   set pcolor (pxcor + pycor) mod 2 + 56
-  set id 0 set snake? 0 set tail-1 0 set tail-2 0 set food-value 0
+  set id 0 set snake? 0 set tail-1 0 set tail-2 0 set #_Of_Cakes-value 0
 end
 
 ;
@@ -262,20 +262,20 @@ end
 ;
 
 ;;Environment
-to food-spawn [num] ;spawns the food depending on the food slider
+to #_Of_Cakes-spawn [num] ;spawns the #_Of_Cakes depending on the #_Of_Cakes slider
   ask n-of num patches with [pcolor = 56 or pcolor = 57] [
-    set food-value (random 3) + 1
-    set pcolor scale-color brown food-value -3 6
+    set #_Of_Cakes-value (random 3) + 1
+    set pcolor scale-color brown #_Of_Cakes-value -3 6
     sprout-cakes 1  [set shape "cake" set size 3]
   ]
 end
 
-to food-spawn-competitive [side] ;spawns food for competitive gamemode
-  if count patches with [food-value > 0 and (side * pxcor) > 0] < food
+to #_Of_Cakes-spawn-competitive [side] ;spawns #_Of_Cakes for competitive gamemode
+  if count patches with [#_Of_Cakes-value > 0 and (side * pxcor) > 0] < #_Of_Cakes
   [
     ask one-of patches with [pcolor = 56 or pcolor = 57 and (side * pxcor) > 0] [
-      set food-value (random 3) + 1
-      set pcolor scale-color brown food-value -3 6
+      set #_Of_Cakes-value (random 3) + 1
+      set pcolor scale-color brown #_Of_Cakes-value -3 6
       sprout-cakes 1  [set shape "cake" set size 3]
   ]]
 end
@@ -285,9 +285,9 @@ to world-setup ;sets up the world
   ask patches with [pcolor = 0][Reset-patches] ;creates checkerboard pattern
 end
 
-to food-spawn-go ;spawns food as the game runs
-  if count patches with [food-value > 0] < food
-  [food-spawn 1]
+to #_Of_Cakes-spawn-go ;spawns #_Of_Cakes as the game runs
+  if count patches with [#_Of_Cakes-value > 0] < #_Of_Cakes
+  [#_Of_Cakes-spawn 1]
 end
 
 ;;Maps- using chooser "Maps," creates different maps with different obstacles
@@ -407,7 +407,7 @@ to snake1-win ;snake1's victory animation
 end
 
 to victory ;victory crown for snake
-  if Players > 1[
+  if #_Of_Players > 1[
     if (count snakes-1 + count snakes-2 = 0)
       [User-message (word "You both died")
         if ask-mode? [switch-mode] setup]
@@ -435,7 +435,7 @@ to victory-animation [snake] ;sends the message to the user that the winning sna
 end
 
 to single-player-message
-  if players = 1 and
+  if #_Of_Players = 1 and
   not any? snakes-1
   [if user-yes-or-no? (word  "Restart?" )
     [if ask-mode? [switch-mode]
@@ -529,9 +529,9 @@ to spawn-selector;Chooses snakes spawn points (depends on the gamemode)
   ]
 end
 
-to Mode-go; This is the basis for the changed actions during the different modes. Includes food-spawn and other non-universal functions here.
+to Mode-go; This is the basis for the changed actions during the different modes. Includes #_Of_Cakes-spawn and other non-universal functions here.
   if member? Mode-selector ["Normal" "No Competition"]
-    [food-spawn-go Victory]
+    [#_Of_Cakes-spawn-go Victory]
 
   if Mode-selector = "Friendly World Dig"
   [bomb-tick
@@ -542,8 +542,8 @@ to Mode-go; This is the basis for the changed actions during the different modes
   ]]
 
   if Mode-selector = "Competitive"
-  [food-spawn-competitive -1
-    food-spawn-competitive 1
+  [#_Of_Cakes-spawn-competitive -1
+    #_Of_Cakes-spawn-competitive 1
     set comp-timer comp-timer - 1
     if comp-timer = 0 [comp-victory]
     Victory
@@ -625,15 +625,15 @@ to big-erase ;Erases a larger area
     Reset-ticks]
 end
 
-to edit ;The all-in-one function depends on edit-mode
+to edit ;The all-in-one function depends on Color_
   ifelse any? turtles
   [stop]
   [
-    if Edit-mode = "Paint Blue"[paint 88]
-    if Edit-mode = "Paint Red" [paint 18]
-    if Edit-mode = "Paint Black"[paint 1]
-    if Edit-mode = "Erase" [erase]
-    if Edit-mode = "Big Eraser" [big-erase]
+    if Color_ = "Paint Blue"[paint 88]
+    if Color_ = "Paint Red" [paint 18]
+    if Color_ = "Paint Black"[paint 1]
+    if Color_ = "Erase" [erase]
+    if Color_ = "Big Eraser" [big-erase]
   ]
 end
 
@@ -1051,8 +1051,8 @@ CHOOSER
 545
 155
 590
-Players
-Players
+#_Of_Players
+#_Of_Players
 1 2
 0
 
@@ -1061,8 +1061,8 @@ CHOOSER
 545
 298
 590
-Food
-Food
+#_Of_Cakes
+#_Of_Cakes
 1 2 3 4 5
 1
 
@@ -1154,17 +1154,17 @@ CHOOSER
 456
 204
 501
-Edit-mode
-Edit-mode
+Color_
+Color_
 "Paint Blue" "Paint Red" "Paint Black" "Erase" "Big Eraser"
 0
 
 BUTTON
 204
 412
-280
+291
 502
-NIL
+Save Map
 Save-Map
 NIL
 1
@@ -1267,10 +1267,10 @@ The World <ザ・ワールド(世界)>
 1
 
 TEXTBOX
-263
-695
-424
-715
+228
+688
+378
+708
 Note: Use at your own risk
 12
 25.0
@@ -1305,35 +1305,20 @@ O will cause snake 2 to drop bombs.
 The "Players" chooser will determine how many players there will be in the game. 
 The "Gamemode" chooser will choose which gamemode you wish to play in. More information is in the GAMEMODE section. 
 The "Maps" chooser will choose which map the world is set to. (For competitive, you cannot choose your map). 
-The "Food" chooser will determine how many cakes will spawn in the world. (For competitve, it will determine how many cakes per world).
+The "# Of Cakes" chooser will determine how many cakes will spawn in the world. (For competitve, it will determine how many cakes per world).
 The switch "Ask-Mode?" will toggle whether you wish to be prompted to switch your gamemode everytime. 
 You can choose which map to play on using the chooser "Maps." 
 
 ## Gamemodes
-Normal- The Basic Gamemode. SUPPORTS MAPS. Allows you to bomb place bombs.
-Running the snake into itself or another snake will kill it, and it can eat cakes to grow in size.
 
-No Competition- Pratically normal, except you can not kill other snakes by running into them. However, you can still bomb them, so there is still some competition.
-
-Friendly World Dig- Play by yourself or with others, when you remove the world's rocks by bombing them, you win the game. You can not kill yourself and the only way you can die is by running into a rock. Only gamemode where both players can enjoy mutual victory.
-
-Competitive- This is the gamemode that is most snake-like at heart. You can not bomb anything, but rather you must increase your size in the time frame without killing yourself. Victory is determined by being the better snake player. Players can not directly influence each other.
-
-### How They Work
-There are two commands and four globals that make this a thing.
--Modego and Modesetup.
-They depend on the gamemode and mode-selector is a global that allows non-buggy switching mid-game.
--Restrict-1 and 2 are the things that kill the their respective snake. By utilizing this, we can take advantage of modular design to make the code less redundant.
--Bombs? is quite an obvious one and decides if you can use bombs or not in that gamemode.
--Comp-timer is special as it is only used in competitive but it is how long you have left in the game.
-
+(insert stuff about gamemodes David)
 
 ## DevTools
 
 You can now customize maps in superSnake!
 Press "Canvas" to create a blank world, where you will "paint" your masterpiece. 
 Press "Edit" to edit the canvas; use the chooser "Edit-mode" to choose how you want to paint or erase. 
-Press "Save-Map" to save your masterpiece to "Map 1," "Map 2," or "Map 3."
+Press "Save Map" to save your masterpiece to "Map 1," "Map 2," or "Map 3."
 Go back to the chooser "Maps" to choose your saved map, and press Start to play. 
 
 ## How it Works
