@@ -1340,7 +1340,16 @@ You can choose which map to play on using the chooser "Maps."
 
 ## Gamemodes
 
-(insert stuff about gamemodes David)
+Normal- The Basic Gamemode. SUPPORTS MAPS. Allows you to bomb place bombs.
+Running the snake into itself or another snake will kill it, and it can eat cakes to grow in size.
+
+No Competition- Pratically normal, except you can not kill other snakes by running into them. However, you can still bomb them, so there is still some competition.
+
+Friendly World Dig- Play by yourself or with others, when you remove the world's rocks by bombing them, you win the game. You can not kill yourself and the only way you can die is by running into a rock. Only gamemode where both players can enjoy mutual victory.
+
+Competitive- This is the gamemode that is most snake-like at heart. You can not bomb anything, but rather you must increase your size in the time frame without killing yourself. Victory is determined by being the better snake player. Players can not directly influence each other.
+
+Deathmatch- Snakes increase their length, based on the number in the Competitive Timer. If the timer hits 0, the snakes increase their length by 1. Snakes cannot eat cake in this mode; they have to battle it out with their length and their bombs.
 
 ## DevTools
 
