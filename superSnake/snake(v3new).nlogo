@@ -410,7 +410,7 @@ to victory ;victory crown for snake
   if #_Of_Players > 1[
     if (count snakes-1 + count snakes-2 = 0)
       [User-message (word "You both died")
-        if Ask-Mode [switch-mode] setup]
+        if ask-mode? [switch-mode] setup]
     if (not any? snakes-1) [
       snake2-win
     ]
@@ -423,7 +423,7 @@ end
 to comp-victory ;Competitive timer-victory
   ifelse length-1 = length-2
   [ifelse user-yes-or-no? (word  "It's a tie. Restart?" )
-    [if Ask-Mode [switch-mode] setup][set comp-timer 300]]
+    [if ask-mode? [switch-mode] setup][set comp-timer 300]]
   [ifelse length-1 > length-2
     [snake1-win]
     [snake2-win]]
@@ -431,14 +431,14 @@ end
 
 to victory-animation [snake] ;sends the message to the user that the winning snake has won. Then asks whether to continue to another game (yes), let the winning snake keep playing (no), or to stop (halt).
   if user-yes-or-no? (word "Snake " snake " has won the game. Restart?" )
-  [if Ask-Mode [switch-mode] setup]
+  [if ask-mode? [switch-mode] setup]
 end
 
 to single-player-message
   if #_Of_Players = 1 and
   not any? snakes-1
   [if user-yes-or-no? (word  "Restart?" )
-    [if Ask-Mode [switch-mode]
+    [if ask-mode? [switch-mode]
       setup]]
 end
 
@@ -788,10 +788,10 @@ NIL
 1
 
 BUTTON
-283
-258
-346
-292
+300
+262
+363
+296
 Up
 north 2\n\n
 NIL
@@ -822,10 +822,10 @@ NIL
 1
 
 BUTTON
-283
-325
-348
-360
+300
+330
+364
+364
 Down
 south 2\n
 NIL
@@ -873,10 +873,10 @@ NIL
 1
 
 BUTTON
-347
-303
-413
-337
+363
+307
+429
+341
 Right
 east 2\n
 NIL
@@ -890,10 +890,10 @@ NIL
 1
 
 BUTTON
-227
-302
-284
-336
+243
+306
+300
+340
 Left
 west 2
 NIL
@@ -935,10 +935,10 @@ Cooldown
 11
 
 MONITOR
-347
-258
-413
-303
+363
+262
+429
+307
 Cooldown
 100 - bomb-2
 17
@@ -946,10 +946,10 @@ Cooldown
 11
 
 BUTTON
-283
-292
-347
-327
+300
+296
+363
+330
 Bomb
 bomb-summon 2
 NIL
@@ -974,10 +974,10 @@ Player1
 11
 
 MONITOR
-227
-258
-284
-303
+243
+262
+300
+307
 Length
 Player2
 17
@@ -992,7 +992,7 @@ CHOOSER
 Maps
 Maps
 "Plain" "Border" "Hideout" "Space" "Mount" "Minecraft" "Map1" "Map2" "Map3"
-0
+3
 
 SLIDER
 155
@@ -1003,7 +1003,7 @@ Speed
 Speed
 0
 10
-7.0
+10.0
 1
 1
 NIL
@@ -1093,7 +1093,7 @@ CHOOSER
 #_Of_Cakes
 #_Of_Cakes
 1 2 3 4 5
-2
+1
 
 MONITOR
 228
@@ -1111,8 +1111,8 @@ SWITCH
 623
 298
 656
-Ask-Mode
-Ask-Mode
+Ask-Mode?
+Ask-Mode?
 1
 1
 -1000
@@ -1236,10 +1236,10 @@ Player 1
 1
 
 TEXTBOX
-227
-233
-377
-258
+243
+237
+393
+262
 Player 2
 20
 15.0
