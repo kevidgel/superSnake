@@ -410,7 +410,7 @@ to victory ;victory crown for snake
   if #_Of_Players > 1[
     if (count snakes-1 + count snakes-2 = 0)
       [User-message (word "You both died")
-        if ask-mode? [switch-mode] setup]
+        if Ask-Mode [switch-mode] setup]
     if (not any? snakes-1) [
       snake2-win
     ]
@@ -423,7 +423,7 @@ end
 to comp-victory ;Competitive timer-victory
   ifelse length-1 = length-2
   [ifelse user-yes-or-no? (word  "It's a tie. Restart?" )
-    [if ask-mode? [switch-mode] setup][set comp-timer 300]]
+    [if Ask-Mode [switch-mode] setup][set comp-timer 300]]
   [ifelse length-1 > length-2
     [snake1-win]
     [snake2-win]]
@@ -431,14 +431,14 @@ end
 
 to victory-animation [snake] ;sends the message to the user that the winning snake has won. Then asks whether to continue to another game (yes), let the winning snake keep playing (no), or to stop (halt).
   if user-yes-or-no? (word "Snake " snake " has won the game. Restart?" )
-  [if ask-mode? [switch-mode] setup]
+  [if Ask-Mode [switch-mode] setup]
 end
 
 to single-player-message
   if #_Of_Players = 1 and
   not any? snakes-1
   [if user-yes-or-no? (word  "Restart?" )
-    [if ask-mode? [switch-mode]
+    [if Ask-Mode [switch-mode]
       setup]]
 end
 
@@ -992,7 +992,7 @@ CHOOSER
 Maps
 Maps
 "Plain" "Border" "Hideout" "Space" "Mount" "Minecraft" "Map1" "Map2" "Map3"
-3
+0
 
 SLIDER
 155
@@ -1003,7 +1003,7 @@ Speed
 Speed
 0
 10
-10.0
+7.0
 1
 1
 NIL
@@ -1093,7 +1093,7 @@ CHOOSER
 #_Of_Cakes
 #_Of_Cakes
 1 2 3 4 5
-1
+2
 
 MONITOR
 228
@@ -1111,8 +1111,8 @@ SWITCH
 623
 298
 656
-Ask-Mode?
-Ask-Mode?
+Ask-Mode
+Ask-Mode
 1
 1
 -1000
@@ -1191,9 +1191,9 @@ Color_
 BUTTON
 204
 412
-280
+291
 502
-NIL
+Save Map
 Save-Map
 NIL
 1
@@ -1334,7 +1334,7 @@ O will cause snake 2 to drop bombs.
 The "Players" chooser will determine how many players there will be in the game. 
 The "Gamemode" chooser will choose which gamemode you wish to play in. More information is in the GAMEMODE section. 
 The "Maps" chooser will choose which map the world is set to. (For competitive, you cannot choose your map). 
-The "Foo" chooser will determine how many cakes will spawn in the world. (For competitve, it will determine how many cakes per world).
+The "# Of Cakes" chooser will determine how many cakes will spawn in the world. (For competitve, it will determine how many cakes per world).
 The switch "Ask-Mode?" will toggle whether you wish to be prompted to switch your gamemode everytime. 
 You can choose which map to play on using the chooser "Maps." 
 
@@ -1347,7 +1347,7 @@ You can choose which map to play on using the chooser "Maps."
 You can now customize maps in superSnake!
 Press "Canvas" to create a blank world, where you will "paint" your masterpiece. 
 Press "Edit" to edit the canvas; use the chooser "Edit-mode" to choose how you want to paint or erase. 
-Press "Save-Map" to save your masterpiece to "Map 1," "Map 2," or "Map 3."
+Press "Save Map" to save your masterpiece to "Map 1," "Map 2," or "Map 3."
 Go back to the chooser "Maps" to choose your saved map, and press Start to play. 
 
 ## How it Works
