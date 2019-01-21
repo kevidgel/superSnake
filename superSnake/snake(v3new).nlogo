@@ -461,7 +461,7 @@ end
 
 to Mode
 
-  if Gamemode = "Normal";Typical setup. Everything basicallly kills you
+  if Gamemode = "Normal";Typical setup. Everything basically kills you
   [normal-game
   ]
 
@@ -518,7 +518,7 @@ to Competitive-game
   set comp-timer 900
 end
 
-to spawn-selector;CHooses snakes spawn points (depends on the gamemode)
+to spawn-selector;Chooses snakes spawn points (depends on the gamemode)
   ifelse Gamemode = "Competitive"
   [
     set Spawn-1 (patch -24 0)
@@ -551,7 +551,7 @@ to Mode-go; This is the basis for the changed actions during the different modes
 end
 
 ;;Misc
-to credits-screen ;credit screen, makes patches form the words "Super Snake by brad2 - infinity"
+to credits-screen ;credit screen, makes patches form the words "Super Snake by b-rad2 - infinity"
   ct
   ask patches [ reset-patches ]
   ask patches at-points [[2 7] [19 13] [13 7] [-3 12] [10 13] [5 10];Don't Worry We did not manually create this
@@ -610,7 +610,7 @@ to paint [color-z];Painting function for maps and credits screen
     reset-ticks]
 end
 
-to erase ;Erasing function. Resets pcolor.
+to erase ;Erasing function- Resets pcolor.
   if mouse-down?
   [ask patch mouse-xcor mouse-ycor [ reset-patches ]
     reset-ticks]
@@ -637,7 +637,7 @@ to edit ;The all-in-one function depends on edit-mode
   ]
 end
 
-to-report save [color-z] ;save patches with a certain pcolor as a list.
+to-report save [color-z] ;Saves patches with a certain pcolor as a list.
   let list-z []
   ask patches with [pcolor = color-z]
   [
@@ -963,7 +963,7 @@ CHOOSER
 Maps
 Maps
 "Plain" "Border" "Hideout" "Space" "Mount" "Minecraft" "Map1" "Map2" "Map3"
-0
+3
 
 SLIDER
 155
@@ -1064,7 +1064,7 @@ CHOOSER
 Food
 Food
 1 2 3 4 5
-2
+1
 
 MONITOR
 228
@@ -1332,7 +1332,7 @@ Gamemodes are made by modifying the go and setup functions in such a way that th
 +New startup popup
 +Choose the names of the snakes
 +Victory messages improved
-+Removed bombs? switch(if you don't like bombs don't press "E")
++Removed bombs? switch(if you don't like bombs don't press "E" or "O")
 +Competitive Gamemode
 +Changed color of the Walls.
 
