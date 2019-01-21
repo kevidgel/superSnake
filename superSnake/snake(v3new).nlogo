@@ -53,7 +53,7 @@ end
 
 to switch-mode;Prompts you to select gamemode and player number.
   set gamemode user-one-of "Which Gamemode?"
-  ["Normal" "No Competition" "Friendly World Dig" "Competitive"]
+  ["Normal" "No Competition" "Friendly World Dig" "Competitive" "Death-Match"]
   set #_Of_Players user-one-of "How many #_Of_Players?"
   [1 2]
 end
@@ -1017,7 +1017,7 @@ CHOOSER
 Gamemode
 Gamemode
 "Normal" "No Competition" "Friendly World Dig" "Competitive" "Death-Match"
-4
+0
 
 BUTTON
 120
